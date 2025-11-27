@@ -336,20 +336,14 @@ if st.button("🔍 Find funding matches"):
 
     # 1) Save project submission (set Deep Dive Status = pending explicitly)
     fields = {
-        "Organization": org_name,
         "Name": name,
         "Email": email,
         "Applicant Type": applicant_type,
         "Region": region,
         "Budget Range": budget_range,
         "Project Types": ", ".join(project_types) if project_types else "",
-        "Themes": ", ".join(themes) if themes else "",
-        "Stage": stage,
-        "Partners": partners,
-        "Match Funding": match_funding,
         "Project Title": project_title,
         "Description": description,
-        "Deep Dive Status": "pending",  # ensure lowercase 'pending'
     }
 
     submission_id = create_project_submission(fields)
