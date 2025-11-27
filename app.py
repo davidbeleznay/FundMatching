@@ -230,6 +230,62 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
 # ---------------------------------------------------------------------
 st.set_page_config(page_title="Funding Matcher MVP", layout="wide")
 
+st.markdown(
+    """
+    <style>
+    :root {
+        --bg-dark: #0b1221;
+        --card: #0f172a;
+        --muted: #9fb3c8;
+        --accent: #22d3ee;
+        --primary: #0f766e;
+    }
+
+    .stApp { background: radial-gradient(circle at 10% 20%, #132035 0, #0b1221 25%),
+                           radial-gradient(circle at 80% 0%, rgba(34, 211, 238, 0.12), transparent 30%);
+              color: #e2e8f0; }
+    section.main > div { padding-top: 1rem; }
+    .block-container { padding: 2rem 2.5rem 3rem; border-radius: 18px; background: rgba(15, 23, 42, 0.75); }
+    textarea, input, select, .stTextInput > div > div > input, .stTextArea textarea, .stMultiSelect div[data-baseweb="input"] {
+        border-radius: 12px !important;
+        border: 1px solid #1f2937 !important;
+        background-color: #0b1221 !important;
+        color: #e2e8f0 !important;
+    }
+    .stSelectbox [data-baseweb="select"] > div { border-radius: 12px !important; }
+    .stMultiSelect { border-radius: 12px; }
+    button[kind="primary"], .stButton button { border-radius: 12px; font-weight: 700; }
+    .hero {
+        background: linear-gradient(120deg, rgba(15, 118, 110, 0.22), rgba(34, 211, 238, 0.14));
+        border: 1px solid rgba(34, 211, 238, 0.25);
+        border-radius: 20px;
+        padding: 18px 20px;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
+    .hero h1 { margin: 0; font-size: 1.8rem; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: var(--accent); margin-bottom: 0.35rem; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); color: #e2e8f0; font-size: 0.9rem; }
+    .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .section-header { display: flex; align-items: center; gap: 12px; margin: 1rem 0 0.35rem; }
+    .section-number { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: rgba(34, 211, 238, 0.16); color: #e2e8f0; font-weight: 700; }
+    .section-header h3 { margin: 0; }
+    .section-sub { color: var(--muted); margin-top: 2px; margin-bottom: 0; }
+    .program-card { border-radius: 18px; padding: 18px 18px 10px; margin-bottom: 1.1rem; background: var(--card); border: 1px solid #1f2937; box-shadow: 0 20px 45px rgba(0,0,0,0.35); }
+    .program-card h3 { margin-bottom: 0.1rem; }
+    .program-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .score-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: linear-gradient(120deg, #0f766e, #22d3ee); color: #0b1221; font-weight: 800; }
+    .score-badge small { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; opacity: 0.9; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.6rem; margin: 0.8rem 0; }
+    .metric-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px 12px; border-radius: 12px; }
+    .metric-label { color: var(--muted); font-size: 0.85rem; margin: 0; }
+    .metric-value { font-size: 1.05rem; margin: 0.15rem 0 0; font-weight: 600; }
+    .muted { color: var(--muted); }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 with st.sidebar:
     st.header("ℹ️ About this prototype")
     st.markdown(
@@ -244,11 +300,34 @@ with st.sidebar:
         """
     )
 
-st.title("🌱 EcoProject Navigator – Funding Matcher MVP")
-st.caption("Match restoration projects to potential funding programs.")
+st.markdown(
+    """
+    <div class="hero">
+        <p class="eyebrow">Funding matcher MVP</p>
+        <h1>EcoProject Navigator</h1>
+        <p class="muted">Tell us about your project and get a short list of programs, instantly scored against PRD-aligned criteria.</p>
+        <div class="pill" style="margin-top: 8px;">
+            <span class="dot"></span>
+            Save to Airtable automatically &middot; AI deep dive queued on top match
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ------------------- Inputs -------------------
-st.markdown("## 1️⃣ Who are you?")
+st.markdown(
+    """
+    <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+            <h3>Who are you?</h3>
+            <p class="section-sub">This helps align eligibility with the right programs.</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 org_name = st.text_input("Organization")
 name = st.text_input("Your name")
@@ -273,7 +352,18 @@ match_funding = st.selectbox(
     ["Unsure", "Yes", "No"],
 )
 
-st.markdown("## 2️⃣ Project basics")
+st.markdown(
+    """
+    <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+            <h3>Project basics</h3>
+            <p class="section-sub">Scope, location, and focus areas help us rank the matches.</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -400,9 +490,17 @@ if st.button("🔍 Find funding matches"):
         update_project_submission(submission_id, update_fields)
 
     # 6) Display results
-    st.markdown("## 3️⃣ Suggested funding programs")
-    st.caption(
-        "These programs are loaded directly from your Airtable base and ranked against your project using the PRD weighting."
+    st.markdown(
+        """
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <div>
+                <h3>Suggested funding programs</h3>
+                <p class="section-sub">Loaded directly from your Airtable base and scored against your project details.</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     for _, row in df.iterrows():
@@ -410,13 +508,24 @@ if st.button("🔍 Find funding matches"):
             program_name = (
                 row.get("Program_Name") or row.get("Program") or "Unnamed program"
             )
-            st.markdown(f"### 🌊 {program_name}")
 
-            # ----- Top row metrics -----
-            cols = st.columns(4)
-            cols[0].metric("Match score", int(row["Score"]))
+            st.markdown("<div class='program-card'>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="program-top">
+                    <div>
+                        <p class="eyebrow">Funding opportunity</p>
+                        <h3>🌊 {program_name}</h3>
+                    </div>
+                    <div class="score-badge">
+                        <span>{int(row['Score'])}</span>
+                        <small>match</small>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-            # Min / max grants
             min_grant = (
                 row.get("Min_Grant_Amount")
                 or row.get("Minimum_Grant")
@@ -429,10 +538,6 @@ if st.button("🔍 Find funding matches"):
                 or row.get("Maximum_Grant")
                 or "—"
             )
-            cols[1].write(f"**Minimum grant amount:** {min_grant}")
-            cols[2].write(f"**Maximum grant amount:** {max_grant}")
-
-            # Application deadline & competitiveness
             deadline = (
                 row.get("Application_Deadline")
                 or row.get("Next_Deadline")
@@ -445,12 +550,31 @@ if st.button("🔍 Find funding matches"):
                 or row.get("Competition_Level")
                 or "—"
             )
-            cols[3].write(f"**Application deadline:** {deadline}")
 
-            # Second line under metrics for competitiveness (single column)
-            st.write(f"**Competitiveness level:** {competitiveness}")
+            st.markdown(
+                f"""
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <p class="metric-label">Minimum grant</p>
+                        <p class="metric-value">{min_grant}</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Maximum grant</p>
+                        <p class="metric-value">{max_grant}</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Application deadline</p>
+                        <p class="metric-value">{deadline}</p>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Competitiveness</p>
+                        <p class="metric-value">{competitiveness}</p>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-            # ----- Program description -----
             description_field = (
                 row.get("Program_Description") or row.get("Description")
             )
@@ -458,7 +582,6 @@ if st.button("🔍 Find funding matches"):
                 st.markdown("**Program description**")
                 st.write(description_field)
 
-            # ----- Reporting requirements -----
             reporting = (
                 row.get("Reporting_Requirements")
                 or row.get("Reporting")
@@ -468,7 +591,6 @@ if st.button("🔍 Find funding matches"):
                 st.markdown("**Reporting requirements**")
                 st.write(reporting)
 
-            # ----- Portal link & contact email -----
             portal = (
                 row.get("Application_Portal")
                 or row.get("Portal_URL")
@@ -492,4 +614,4 @@ if st.button("🔍 Find funding matches"):
                 st.markdown("**How to apply**")
                 st.write(" • ".join(link_bits))
 
-            st.write("---")
+            st.markdown("</div>", unsafe_allow_html=True)
