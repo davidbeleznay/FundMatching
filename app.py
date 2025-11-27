@@ -497,7 +497,7 @@ if st.button("🔍 Find funding matches"):
         unsafe_allow_html=True,
     )
 
-    for _, row in df.iterrows():
+    def render_program_card(row):
         with st.container():
             program_name = (
                 row.get("Program_Name") or row.get("Program") or "Unnamed program"
@@ -609,3 +609,14 @@ if st.button("🔍 Find funding matches"):
                 st.write(" • ".join(link_bits))
 
             st.markdown("</div>", unsafe_allow_html=True)
+
+    top_matches = df.head(3)
+    more_matches = df.iloc[3:]
+
+    for _, row in top_matches.iterrows():
+        render_program_card(row)
+
+    if not more_matches.empty:
+        st.markdown("## More opportunities")
+        for _, row in more_matches.iterrows():
+            render_program_card(row)
