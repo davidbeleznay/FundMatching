@@ -236,6 +236,7 @@ st.markdown(
     :root {
         --bg-dark: #0b1221;
         --card: #0f172a;
+        --card-alt: #1a2332;
         --muted: #9fb3c8;
         --accent: #22d3ee;
         --primary: #0f766e;
@@ -251,10 +252,28 @@ st.markdown(
         border: 1px solid #1f2937 !important;
         background-color: #0b1221 !important;
         color: #e2e8f0 !important;
+        transition: border-color 0.2s ease;
+    }
+    textarea:focus, input:focus, select:focus, .stTextInput > div > div > input:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.1) !important;
     }
     .stSelectbox [data-baseweb="select"] > div { border-radius: 12px !important; }
     .stMultiSelect { border-radius: 12px; }
-    button[kind="primary"], .stButton button { border-radius: 12px; font-weight: 700; }
+    button[kind="primary"], .stButton button {
+        border-radius: 12px;
+        font-weight: 700;
+        background: linear-gradient(120deg, #0f766e, #22d3ee) !important;
+        border: none !important;
+        padding: 0.75rem 2rem !important;
+        font-size: 1rem !important;
+        box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button[kind="primary"]:hover, .stButton button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 211, 238, 0.4);
+    }
     .hero {
         background: linear-gradient(120deg, rgba(15, 118, 110, 0.22), rgba(34, 211, 238, 0.14));
         border: 1px solid rgba(34, 211, 238, 0.25);
@@ -267,19 +286,79 @@ st.markdown(
     .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: var(--accent); margin-bottom: 0.35rem; }
     .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); color: #e2e8f0; font-size: 0.9rem; }
     .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
-    .section-header { display: flex; align-items: center; gap: 12px; margin: 1rem 0 0.35rem; }
+
+    .input-section {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .section-header { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0 1rem; }
     .section-number { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: rgba(34, 211, 238, 0.16); color: #e2e8f0; font-weight: 700; }
     .section-header h3 { margin: 0; }
     .section-sub { color: var(--muted); margin-top: 2px; margin-bottom: 0; }
-    .program-card { border-radius: 18px; padding: 18px 18px 10px; margin-bottom: 1.1rem; background: var(--card); border: 1px solid #1f2937; box-shadow: 0 20px 45px rgba(0,0,0,0.35); }
+
+    .program-card {
+        border-radius: 18px;
+        padding: 20px 22px 14px;
+        margin-bottom: 1rem;
+        background: var(--card);
+        border: 1px solid #1f2937;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .program-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    .program-card-alt {
+        background: var(--card-alt);
+    }
     .program-card h3 { margin-bottom: 0.1rem; }
     .program-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .score-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: linear-gradient(120deg, #0f766e, #22d3ee); color: #0b1221; font-weight: 800; }
+    .score-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: linear-gradient(120deg, #0f766e, #22d3ee);
+        color: #0b1221;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+    }
     .score-badge small { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; opacity: 0.9; }
-    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.6rem; margin: 0.8rem 0; }
-    .metric-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px 12px; border-radius: 12px; }
+
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.75rem;
+        margin: 1rem 0;
+    }
+    .metric-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 12px 14px;
+        border-radius: 12px;
+        transition: background 0.2s ease;
+    }
+    .metric-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
     .metric-label { color: var(--muted); font-size: 0.85rem; margin: 0; }
     .metric-value { font-size: 1.05rem; margin: 0.15rem 0 0; font-weight: 600; }
+
+    .info-box {
+        background: rgba(15, 118, 110, 0.08);
+        border: 1px solid rgba(15, 118, 110, 0.2);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin: 0.75rem 0;
+    }
+
     .muted { color: var(--muted); }
     </style>
     """,
@@ -325,6 +404,7 @@ st.markdown(
             <p class="section-sub">This helps align eligibility with the right programs.</p>
         </div>
     </div>
+    <div class="input-section">
     """,
     unsafe_allow_html=True,
 )
@@ -352,6 +432,8 @@ match_funding = st.selectbox(
     ["Unsure", "Yes", "No"],
 )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 st.markdown(
     """
     <div class="section-header">
@@ -361,6 +443,7 @@ st.markdown(
             <p class="section-sub">Scope, location, and focus areas help us rank the matches.</p>
         </div>
     </div>
+    <div class="input-section">
     """,
     unsafe_allow_html=True,
 )
@@ -416,6 +499,8 @@ with col2:
 
 project_title = st.text_input("Project title")
 description = st.text_area("Short project description", height=120)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -497,13 +582,15 @@ if st.button("🔍 Find funding matches"):
         unsafe_allow_html=True,
     )
 
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
         with st.container():
             program_name = (
                 row.get("Program_Name") or row.get("Program") or "Unnamed program"
             )
 
-            st.markdown("<div class='program-card'>", unsafe_allow_html=True)
+            # Alternate between regular and alt card styles
+            card_class = "program-card" if idx % 2 == 0 else "program-card program-card-alt"
+            st.markdown(f"<div class='{card_class}'>", unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div class="program-top">
@@ -573,8 +660,10 @@ if st.button("🔍 Find funding matches"):
                 row.get("Program_Description") or row.get("Description")
             )
             if description_field:
+                st.markdown("<div class='info-box'>", unsafe_allow_html=True)
                 st.markdown("**Program description**")
                 st.write(description_field)
+                st.markdown("</div>", unsafe_allow_html=True)
 
             reporting = (
                 row.get("Reporting_Requirements")
@@ -582,8 +671,10 @@ if st.button("🔍 Find funding matches"):
                 or row.get("Reporting_Notes")
             )
             if reporting:
+                st.markdown("<div class='info-box'>", unsafe_allow_html=True)
                 st.markdown("**Reporting requirements**")
                 st.write(reporting)
+                st.markdown("</div>", unsafe_allow_html=True)
 
             portal = (
                 row.get("Application_Portal")
