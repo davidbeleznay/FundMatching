@@ -1,8 +1,9 @@
 {
   "program_id": "sfi-climate-smart-forestry",
   "program_name": "SFI Indigenous-Led Climate Smart Forestry",
-  "template_version": "2.0",
+  "template_version": "2.1",
   "last_updated": "2024-12-13",
+  "notes": "Includes BCR explainers, example responses (weak vs strong), and response strengthening tips",
   
   "questions": [
     {
@@ -12,36 +13,43 @@
       "why": "SFI needs to verify you're a First Nation/Indigenous org with decision-making responsibilities for forests in Canada",
       "required": true,
       "triggers": ["First Nation", "Indigenous"],
-      "help_text": "Example: We are [Band Name] with a Community Forest Agreement covering 15,000 hectares. Our Lands Department has authority over forest management decisions as delegated by Chief and Council.",
-      "expected_length": "2-3 sentences",
+      "help_text": "Be specific: Band name, type of tenure (CFA, TFL partnership, treaty rights), hectares managed, which department has authority",
+      "example_weak": "We are a First Nation with a Community Forest.",
+      "example_strong": "We are Pacheedaht First Nation with a 20-year Community Forest Agreement covering 12,500 hectares in the Sarita and Carmanah watersheds. Our Lands Department, operating under delegation from Chief and Council, has full authority over forest management planning, harvesting decisions, and restoration activities within our CFA. We have been actively managing these forests since 2015 with a focus on ecosystem-based management and cultural values integration.",
+      "why_strong": "Specific geography, clear authority structure, demonstrates experience, shows values alignment",
+      "expected_length": "3-5 sentences",
       "scoring_weight": 15
     },
     {
       "id": "bcr_status",
       "category": "critical",
       "question": "Do you have a Band Council Resolution (BCR) supporting this project?",
-      "why": "BCR is required for submission - this tells us if you're ready to submit or need to schedule this",
+      "why": "BCR is REQUIRED for submission - this tells us if you're ready to submit or need to schedule this first",
       "required": true,
-      "help_text": "If not yet: When is your next Chief & Council meeting? BCRs typically take 2-4 weeks.",
+      "bcr_explainer": "**What is a BCR?** A Band Council Resolution is an official decision by Chief and Council that authorizes actions on behalf of the First Nation. For grants, it shows leadership approval and authorizes someone to submit/sign agreements. **Timeline:** 2-4 weeks typically (depends on meeting schedule). **Required for:** Nearly all First Nation grant applications.",
+      "help_text": "Be honest about status - knowing you need BCR helps plan timeline. If not yet: When is next Chief & Council meeting?",
       "examples": [
-        "Yes - BCR passed on [Date]",
-        "Not yet - Next C&C meeting is [Date], will request BCR then",
-        "In progress - Draft BCR prepared, awaiting next meeting on [Date]"
+        "✅ READY: Yes - BCR-2024-087 approved at November 30 meeting, authorizes Lands Manager to submit and sign agreements",
+        "⏳ IN PROGRESS: Draft prepared and on agenda for January 20 C&C meeting - expect approval then",
+        "❌ NOT STARTED: Need to draft and schedule - next C&C meeting is February 15, will request BCR approval then"
       ],
-      "expected_length": "1 sentence",
+      "template_available": true,
+      "expected_length": "1-2 sentences",
       "scoring_weight": 20
     },
     {
       "id": "chief_letter_status",
       "category": "critical",
       "question": "Do you have a letter of support from Chief & Council ready?",
-      "why": "Required supporting document - checks if you have this or need to obtain it",
+      "why": "Required supporting document - SFI explicitly asks for this. Checks if you have it or timeline to obtain",
       "required": true,
+      "help_text": "Can often be combined with BCR process. Letter should be on letterhead, signed by Chief, explaining Nation's support for project",
       "examples": [
-        "Yes - letter signed and ready",
-        "Draft prepared - awaiting Chief's signature",
-        "Not yet - will request after BCR is approved"
+        "✅ READY: Yes - letter signed by Chief on December 1, ready to attach",
+        "⏳ IN PROGRESS: Draft prepared, will get Chief's signature after BCR is approved (Jan 20)",
+        "❌ NOT YET: Will request letter from Chief once BCR passes - typically takes 1 week after BCR"
       ],
+      "template_available": true,
       "expected_length": "1 sentence",
       "scoring_weight": 15
     },
@@ -52,17 +60,16 @@
       "why": "SFI wants to understand the forest type and stand maturity to assess project approach",
       "required": true,
       "triggers": ["forest", "restoration", "cedar", "planting", "harvest"],
-      "help_text": "Include: biogeoclimatic zone, dominant tree species, age class range",
-      "examples": [
-        "Coastal Western Hemlock (CWH), 60-100 year old second growth with scattered old-growth legacy trees",
-        "Interior Douglas-fir (IDF), young forest 20-40 years with mixed species composition"
-      ],
+      "help_text": "Include: biogeoclimatic zone (BEC), dominant tree species, age class range, site index if known",
+      "example_weak": "Old growth and second growth forest with cedar and hemlock.",
+      "example_strong": "Coastal Western Hemlock (CWH) biogeoclimatic zone, primarily vh1 and vm1 site series. Forest stands are predominantly 60-100 year old second growth western hemlock and Douglas-fir with scattered legacy western redcedar (150-300 years old). Site index ranges from SI 25-35.",
+      "why_strong": "Uses technical forestry terminology, provides specific data, shows professional knowledge",
       "smart_default": {
         "Vancouver Island": "Likely CWH (Coastal Western Hemlock) zone",
         "Barkley Sound": "Coastal Western Hemlock with cedar component",
         "Interior": "Check if IDF, ICH, or SBS biogeoclimatic zone"
       },
-      "expected_length": "1-2 sentences",
+      "expected_length": "2-4 sentences",
       "scoring_weight": 8
     },
     {
@@ -71,55 +78,56 @@
       "question": "Can you provide specific location details (geographic coordinates, watershed name, or land designation)?",
       "why": "SFI requires specific project location in the application",
       "required": true,
-      "help_text": "Examples: GPS coordinates, watershed name, TFL/Community Forest name, traditional territory description",
+      "help_text": "Be as specific as possible - helps reviewers understand context and verify eligibility",
+      "examples": [
+        "Sarita River watershed, within Pacheedaht CFA Block 3. Center coordinates approximately 48.7°N, 125.1°W. Project spans elevations 50-400m.",
+        "Barkley Sound traditional territory, located within [TFL/CFA Name], Blocks 5 and 7. GPS coordinates available for all planting sites."
+      ],
       "expected_length": "1-2 sentences",
       "scoring_weight": 5
     },
     {
       "id": "activities_detail",
       "category": "project_specific",
-      "question": "What specific on-the-ground activities will you implement? Be detailed about methods.",
-      "why": "SFI requires detailed description of implementation activities and methodologies",
+      "question": "What specific on-the-ground activities will you implement? Describe your methods in detail.",
+      "why": "SFI requires detailed description of implementation activities and methodologies - go beyond general categories",
       "required": true,
-      "help_text": "Go beyond general categories - describe specific techniques, equipment, approaches",
-      "examples": [
-        "Site preparation: Manual brushing (no herbicides) followed by cedar planting at 1,200 stems/ha density. Retention harvest: 15-20% basal area retention focused on legacy cedar and culturally modified trees",
-        "Assisted migration trials: Planting Douglas-fir seed from 2 climate zones warmer (400m elevation equivalent) across 50-hectare test sites with monitoring plots"
-      ],
-      "expected_length": "1 paragraph (4-6 sentences)",
+      "help_text": "Describe specific techniques, equipment, timing, approaches. Think: 'How exactly will you do this?'",
+      "example_weak": "We will do retention harvests and plant cedar trees.",
+      "example_strong": "Retention harvest: Using variable retention approach targeting 15-20% basal area retention with focus on legacy cedar, culturally modified trees, and wildlife trees. Harvest operations will use ground-based systems on <30% slopes with designated skid trails to minimize soil disturbance. Cedar enhancement: Site preparation using manual brushing (no herbicides) to reduce hemlock/salal competition. Planting western redcedar at 1,200 stems/ha density using 2-year-old PSB 415B container stock. Seedlings sourced from climate-adapted seed lots (200m lower elevation). Post-planting: Install browse protection on 30% of stems in high-risk areas, establish 20 monitoring plots (20m x 20m) for annual survival/growth measurements.",
+      "why_strong": "Technical detail, specific numbers, shows planning depth, mentions equipment and techniques",
+      "expected_length": "1 paragraph (5-8 sentences)",
       "scoring_weight": 12
     },
     {
       "id": "scalability",
       "category": "project_specific",
       "question": "Your project covers {project_size} hectares. How could this methodology be scaled to 20,000+ hectares or replicated elsewhere?",
-      "why": "SFI prioritizes projects relevant for large forest managers - they want to see broader applicability",
+      "why": "SFI prioritizes projects relevant for large forest managers - they want to see broader applicability beyond your specific site",
       "required": true,
       "conditional": {
         "field": "project_size",
         "operator": "<",
         "value": 20000
       },
-      "help_text": "Focus on: methodology transferability, cost-effectiveness at scale, other Nations/areas that could use this approach",
-      "examples": [
-        "Our TK + LiDAR protocol for cedar site identification can be applied by any Nation with forest tenure and access to provincial LiDAR data",
-        "Approach designed as modular framework - restoration prescriptions can be adapted to different biogeoclimatic zones across coastal BC"
-      ],
-      "expected_length": "3-5 sentences",
+      "help_text": "Focus on: methodology transferability, cost-effectiveness at scale, other Nations/areas that could use this approach, knowledge sharing plans",
+      "example_weak": "Other First Nations could do something similar in their forests.",
+      "example_strong": "Our approach combines traditional ecological knowledge with modern LiDAR analysis to identify priority cedar restoration sites - a methodology that can be applied by any coastal First Nation with forest tenure and access to provincial LiDAR data (freely available). The retention harvest prescriptions we're developing are designed as a modular framework that can be adapted across different biogeoclimatic zones, site series, and stand conditions. We estimate this approach could be scaled to 50,000+ hectares across neighboring Nuu-chah-nulth territories and have committed to sharing our protocols through the BC First Nations Forestry Council and SILVA21 network.",
+      "why_strong": "Specific mechanism for transfer, quantifies scale potential, names actual replication opportunities, addresses knowledge sharing",
+      "expected_length": "4-6 sentences",
       "scoring_weight": 10
     },
     {
       "id": "measurable_outcomes",
       "category": "project_specific",
-      "question": "What are your specific, measurable outcomes? (Provide numbers: hectares, trees, jobs, training participants, etc.)",
-      "why": "SFI wants to see concrete deliverables - be specific with quantities",
+      "question": "What are your specific, measurable outcomes? Provide numbers: hectares, trees, jobs, training participants, etc.",
+      "why": "SFI wants to see concrete deliverables - be specific with quantities, not vague goals",
       "required": true,
-      "help_text": "Quantify everything you can: area treated, trees planted, people employed, sites protected, etc.",
-      "examples": [
-        "• 500 hectares restored • 60,000 cedar seedlings planted • 3 full-time positions (6 months each) • 5 youth trained in forestry practices • 12 culturally significant sites protected",
-        "• 1,200 hectares under retention harvest • 4 employment positions • 2 elders engaged as advisors • 20 community members participate in field sessions"
-      ],
-      "expected_length": "5-8 bullet points with numbers",
+      "help_text": "Quantify EVERYTHING you can: area treated, trees planted, people employed/trained, sites protected, emissions avoided, etc.",
+      "example_weak": "Will restore some hectares, plant trees, and create jobs.",
+      "example_strong": "• 500 hectares treated with retention harvest (15-20% basal area retention)\n• 30,000 western redcedar seedlings planted across 100 hectares\n• 15 culturally modified trees protected through harvest retention\n• 4 community members employed (total 18 person-months)\n• 12 youth trained in forestry practices (120 training hours)\n• 8 traditional use sites enhanced for cultural access\n• 250 tonnes CO2e emissions avoided vs. conventional clearcut\n• 20 permanent monitoring plots established",
+      "why_strong": "Every outcome quantified, diverse benefit types, shows comprehensive planning",
+      "expected_length": "6-10 bullet points with specific numbers",
       "scoring_weight": 12
     },
     {
@@ -128,258 +136,64 @@
       "question": "What specific cultural and socioeconomic benefits will this project provide to your community?",
       "why": "ECCC funding requires demonstration of cultural value enhancement - this is a key selection criterion",
       "required": true,
-      "examples": [
-        "Enhanced access to traditional medicines (devil's club, cedar bark, berries)",
-        "Youth employment and forestry training - minimum 3 positions",
-        "Protection of ceremonial bark-harvesting sites",
-        "Strengthening intergenerational traditional knowledge transmission"
-      ],
-      "expected_length": "3-5 bullet points",
+      "help_text": "Be specific and quantify where possible. Think: access to traditional resources, employment, training, site protection, knowledge transmission",
+      "example_weak": "Will help preserve our culture and create some jobs.",
+      "example_strong": "• Enhanced access to traditional medicines: Restoration of understory diversity will support devil's club, salal, and huckleberry harvesting at 8 culturally significant sites\n• Employment & training: Minimum 3 full-time positions (6 months each) for community members, plus youth forestry training program reaching 12 participants\n• Protection of cultural heritage: Retention harvest approach will protect 15 identified culturally modified trees and 4 ceremonial bark-harvesting sites\n• Intergenerational knowledge transmission: Elder-led field sessions (6 planned) where traditional cedar knowledge is shared with youth participants\n• Food security: Restoration of traditional food species including crabapple and salal across 100+ hectares",
+      "why_strong": "Specific and quantified, multiple benefit types, shows planning depth, connects to traditional practices",
+      "expected_length": "4-6 bullet points with details",
       "scoring_weight": 10
     },
     {
       "id": "climate_benefits",
       "category": "project_specific",
       "question": "What measurable climate benefits will this project provide (emissions reduction, carbon storage, or climate adaptation)?",
-      "why": "Climate benefits are required for ECCC funding - be specific about mechanism",
+      "why": "Climate benefits are REQUIRED for ECCC funding - be specific about mechanism and ideally quantify",
       "required": true,
-      "examples": [
-        "Retention harvest reduces emissions vs. clearcut by avoiding slash burning of 500 tonnes biomass",
-        "Climate-adapted species selection increases forest resilience - planting drought-tolerant provenances reduces mortality risk under +2°C scenarios",
-        "Structural diversification creates fire-resilient stands through 20% retention and species mixing"
-      ],
-      "expected_length": "2-4 sentences",
+      "help_text": "Describe HOW your project helps climate (mechanism) and quantify if possible (even rough estimates help)",
+      "example_weak": "Will reduce emissions and help forests adapt to climate change.",
+      "example_strong": "This project provides climate benefits through three mechanisms: (1) Emissions reduction - our retention harvest approach avoids slash burning of an estimated 500 tonnes of biomass, preventing release of approximately 250 tonnes CO2e compared to conventional clearcut; (2) Enhanced carbon storage - retaining 15-20% basal area maintains an additional 1,200 tonnes CO2 in live tree biomass over the 50-year period; (3) Climate adaptation - selection of drought-tolerant western redcedar provenances from 200m lower elevation increases seedling survival under projected +2°C warming scenarios.",
+      "why_strong": "Three specific mechanisms, quantified where possible, shows technical understanding, connects to climate science",
+      "expected_length": "3-5 sentences with mechanisms explained",
       "scoring_weight": 12
     },
     {
       "id": "team_expertise",
       "category": "strengthen",
       "question": "Who are the key team members and what relevant experience do they bring?",
-      "why": "SFI evaluates 'demonstrated knowledge, experience, and expertise'",
+      "why": "SFI evaluates 'demonstrated knowledge, experience, and expertise' - show you have capacity to deliver",
       "required": true,
       "format": "List 2-4 people with: Name, Role, 1-2 sentence background",
-      "help_text": "Include: RPF/forestry professionals, elders/knowledge keepers, project managers",
-      "expected_length": "2-4 team members",
+      "help_text": "Include: RPF/forestry professionals, elders/knowledge keepers, project managers. Show relevant experience.",
+      "example_weak": "• Project manager\n• Some elders\n• Forestry person",
+      "example_strong": "• Sarah Johnson, RPF - Lands Manager with 15 years forest management experience, led 3 successful restoration projects (FWCP, BCSRIF), expertise in retention silviculture\n• Elder Tom George - Traditional knowledge holder for cedar harvesting and forest stewardship, 40+ years experience with cultural site management\n• Mike Chen - Project Coordinator, BC Indigenous Forestry Initiative graduate, 8 years watershed restoration experience, certified arborist",
+      "why_strong": "Names, credentials, specific experience, demonstrates professional capacity",
+      "expected_length": "2-4 team members with details",
       "scoring_weight": 8
     },
     {
       "id": "monitoring_plan",
       "category": "project_specific",
-      "question": "How will you monitor and measure project success? What data will you collect?",
-      "why": "SFI evaluates 'commitment to appropriate measurement and monitoring'",
+      "question": "How will you monitor and measure project success? What specific data will you collect?",
+      "why": "SFI evaluates 'commitment to appropriate measurement and monitoring' - need concrete plan",
       "required": true,
-      "help_text": "Describe: baseline data collection, ongoing monitoring methods, success indicators, photo points, etc.",
+      "help_text": "Describe: baseline data, monitoring methods, frequency, success indicators, who's responsible",
       "examples": [
-        "Baseline: Pre-treatment forest inventory, site photos. Ongoing: Annual survival surveys, photo point monitoring. Success metrics: >80% seedling survival, increased structural diversity indices",
-        "Establish 10 permanent monitoring plots, annual measurements of tree growth/survival, photo documentation, community satisfaction surveys"
+        "Baseline: Pre-treatment forest inventory (all plots), site photos (50 points), cultural site mapping with elders. Ongoing: Annual survival surveys at 20 permanent plots (20x20m), photo point monitoring (same 50 locations), growth measurements (height/diameter), cultural plant recovery assessment with elder review. Success metrics: >80% seedling survival year 1, >70% year 3, increased structural diversity (measured by standard deviation of tree heights), elder confirmation of improved cultural access",
+        "Establish 10 permanent monitoring plots per treatment type, measure annually: tree survival %, height growth, diameter, competing vegetation cover. Photo documentation quarterly. Cultural assessment: Elder-led site visits twice yearly to evaluate traditional use improvements. Data managed by Project Coordinator, reviewed by RPF annually."
       ],
-      "expected_length": "3-5 sentences",
+      "expected_length": "4-6 sentences",
       "scoring_weight": 10
     },
     {
       "id": "carbon_quantification",
       "category": "strengthen",
       "question": "Do you have a methodology to quantify carbon or GHG benefits?",
-      "why": "Not required, but projects with quantification methods receive priority",
+      "why": "Not required, but projects with quantification methods receive priority consideration (+20% in selection)",
       "required": false,
       "examples": [
-        "Will use BC Ministry TIPSY models to compare carbon storage trajectories between retention and clearcut scenarios",
-        "Partnering with UBC Faculty of Forestry for carbon assessment using CBM-CFS3 model",
-        "Working with RPF to estimate avoided emissions from eliminating slash burning (500 tonnes biomass)"
-      ],
-      "competitive_advantage": "+20% selection priority",
-      "scoring_weight": 5
-    },
-    {
-      "id": "project_duration",
-      "category": "project_specific",
-      "question": "Will this be a 1-year or 2-year project? What are your key milestones?",
-      "why": "SFI needs timeline - funds must be spent by March 31, 2027",
-      "required": true,
-      "help_text": "Maximum 2 years. Include major milestones like planning, field work, reporting",
-      "examples": [
-        "2-year: Year 1 - site prep, initial planting (300ha), interim report. Year 2 - expansion planting (200ha), monitoring, final report",
-        "1-year: Months 1-3 planning/procurement, Months 4-8 implementation, Months 9-12 monitoring/reporting"
-      ],
-      "expected_length": "2-4 sentences",
-      "scoring_weight": 5
-    },
-    {
-      "id": "budget_justification",
-      "category": "project_specific",
-      "question": "Please provide a budget breakdown by category (implementation, staff, community engagement, admin)",
-      "why": "SFI requires budget with milestones. Admin max 10%, staff/travel <40%",
-      "required": true,
-      "help_text": "Break down by: field work/operations (should be 60%+), project management/staff, community engagement, travel/training, admin",
-      "examples": [
-        "Implementation 65% ($195K: planting, equipment, contractors), Staff 25% ($75K: project manager, technicians), Community 7% ($21K: elder honoraria, workshops), Admin 3% ($9K)",
-        "Year 1: $140K (site prep $80K, staff $45K, engagement $10K, admin $5K). Year 2: $160K (planting $100K, monitoring $35K, reporting $20K, admin $5K)"
-      ],
-      "expected_length": "1 paragraph with percentages/amounts",
-      "scoring_weight": 12
-    },
-    {
-      "id": "partnership_collaboration",
-      "category": "strengthen",
-      "question": "Are you partnering with any forest companies, research institutions, or other organizations? If yes, what is their role?",
-      "why": "SFI encourages partnerships with forest management companies - collaboration strengthens applications",
-      "required": false,
-      "examples": [
-        "Partnership with Mosaic Forest Management who manages adjacent TFL - providing technical support, equipment rental at cost, and RPF expertise",
-        "Collaborating with UBC Faculty of Forestry on monitoring protocols and carbon assessment methodology",
-        "Working with neighboring Huu-ay-aht First Nation who completed similar cedar project - sharing lessons learned"
-      ],
-      "competitive_advantage": "+15% selection priority for forest company partnerships",
-      "scoring_weight": 8,
-      "help_text": "Partnerships demonstrate collaboration capacity and increase project feasibility"
-    },
-    {
-      "id": "matching_contributions",
-      "category": "strengthen",
-      "question": "Do you have any matching funding or in-kind contributions? If yes, describe.",
-      "why": "Matching contributions are valued in selection criteria - shows broader support",
-      "required": false,
-      "examples": [
-        "In-kind: Community volunteer hours ($15K value), equipment use from forestry contractor ($8K)",
-        "Cash match: $50K from own-source revenue, $30K from [other funder]",
-        "In-kind: RPF technical services donated by partner company ($20K value)"
-      ],
-      "competitive_advantage": "Strengthens budget & cost-effectiveness scoring",
-      "scoring_weight": 7
-    },
-    {
-      "id": "permits_identified",
-      "category": "readiness",
-      "question": "Have you identified what permits or authorizations you'll need? Do you have them or know how to get them?",
-      "why": "Permits can cause major delays - this checks if you've thought through regulatory requirements",
-      "required": true,
-      "help_text": "Common needs: forestry permits, archaeological overview, species at risk assessment, environmental permits",
-      "examples": [
-        "Will need: Cutting permit (have RPF preparing), Archaeological overview (scheduled for January). No species at risk in project area (confirmed with biologist)",
-        "Already have: Forestry Development Unit approval. Will coordinate with existing TFL permit processes"
-      ],
-      "expected_length": "2-3 sentences",
-      "scoring_weight": 10
-    },
-    {
-      "id": "community_consultation",
-      "category": "readiness",
-      "question": "Have you consulted with your community about this project? What was the response?",
-      "why": "Community support is essential for success and often required for Chief & Council approval",
-      "required": true,
-      "help_text": "Describe any community meetings, surveys, or consultations you've done",
-      "examples": [
-        "Presented at community meeting on Oct 15 - strong support from 35 members. Elders particularly interested in cultural site protection component",
-        "Conducted survey with 50 members - 90% support restoration priorities. Follow-up session planned for December"
-      ],
-      "expected_length": "2-3 sentences",
-      "scoring_weight": 8
-    },
-    {
-      "id": "timeline_feasibility",
-      "category": "readiness",
-      "question": "Can you realistically complete this project and spend all funds by March 31, 2027? Walk through your timeline.",
-      "why": "This is a hard deadline - SFI needs to know you can execute in time",
-      "required": true,
-      "help_text": "Consider: permitting time, Chief & Council approval, seasonal windows for field work, procurement, hiring",
-      "examples": [
-        "Yes - Application Jan 2025, approval Feb 2025, field work Apr-Oct 2025 and 2026 (within planting windows), final report Q1 2027",
-        "Tight but doable - Need BCR by Feb, permits by March, begin field work May to maximize 2025 growing season"
-      ],
-      "expected_length": "2-4 sentences",
-      "scoring_weight": 10
-    },
-    {
-      "id": "rpf_involvement",
-      "category": "readiness",
-      "question": "Do you have an RPF (Registered Professional Forester) involved or lined up for this project?",
-      "why": "Technical forestry work often requires RPF oversight - confirms you have professional capacity",
-      "required": true,
-      "examples": [
-        "Yes - Sarah Johnson RPF is our Lands Manager and will oversee all forestry activities",
-        "Will hire - We've identified 2 local RPFs interested in contract work",
-        "Partnership - Mosaic Forest Management will provide RPF support as in-kind contribution"
-      ],
-      "expected_length": "1-2 sentences",
-      "scoring_weight": 7
-    },
-    {
-      "id": "previous_grants",
-      "category": "strengthen",
-      "question": "Has your organization successfully managed grants before? Any relevant examples?",
-      "why": "Demonstrates grant management capacity - reassures funder you can deliver",
-      "required": false,
-      "examples": [
-        "Yes - Successfully completed $180K FWCP watershed restoration grant (2022-2024), delivered on time and budget",
-        "Multiple grants: BCSRIF ($150K), Habitat Conservation Trust ($75K), all with strong final reports",
-        "First major grant - but Lands Manager has 10 years experience with federal grants at previous Nation"
-      ],
-      "competitive_advantage": "Demonstrates proven capacity to deliver",
-      "scoring_weight": 8
-    },
-    {
-      "id": "knowledge_sharing_commitment",
-      "category": "strengthen",
-      "question": "How will you share learnings from this project with other First Nations or forest managers?",
-      "why": "SFI values knowledge sharing and broader impact beyond single project",
-      "required": true,
-      "help_text": "Think about: presentations at conferences, case studies, workshops, field tours, publications",
-      "examples": [
-        "Will present results at SILVA21 annual meeting, host field tour for neighboring Nations, publish case study on our website",
-        "Committed to developing a protocol guide for other coastal Nations, presenting at BC First Nations Forestry Council annual gathering"
-      ],
-      "expected_length": "2-3 sentences",
-      "scoring_weight": 7
-    },
-    {
-      "id": "climate_benefits",
-      "category": "project_specific",
-      "question": "What measurable climate benefits will this project provide (emissions reduction, carbon storage, or climate adaptation)?",
-      "why": "Climate benefits are required for ECCC funding - be specific about mechanism",
-      "required": true,
-      "examples": [
-        "Retention harvest reduces emissions vs. clearcut by avoiding slash burning of estimated 500 tonnes biomass (250 tonnes CO2e)",
-        "Climate-adapted species selection increases forest resilience - planting drought-tolerant provenances reduces mortality risk under +2°C scenarios by estimated 30%",
-        "Structural diversification creates fire-resilient stands through 20% retention and species mixing, reducing catastrophic fire risk"
-      ],
-      "expected_length": "2-4 sentences",
-      "scoring_weight": 12
-    },
-    {
-      "id": "team_expertise",
-      "category": "strengthen",
-      "question": "Who are the key team members and what relevant experience do they bring?",
-      "why": "SFI evaluates 'demonstrated knowledge, experience, and expertise'",
-      "required": true,
-      "format": "List 2-4 people with: Name, Role, 1-2 sentence background",
-      "help_text": "Include: RPF/forestry professionals, elders/knowledge keepers, project managers",
-      "expected_length": "2-4 team members",
-      "scoring_weight": 8
-    },
-    {
-      "id": "monitoring_plan",
-      "category": "project_specific",
-      "question": "How will you monitor and measure project success? What data will you collect?",
-      "why": "SFI evaluates 'commitment to appropriate measurement and monitoring'",
-      "required": true,
-      "help_text": "Describe: baseline data collection, ongoing monitoring methods, success indicators, photo points",
-      "examples": [
-        "Baseline: Pre-treatment forest inventory, site photos, cultural site mapping. Ongoing: Annual survival surveys at 20 monitoring plots, photo point monitoring (50 locations), growth measurements. Success metrics: >80% seedling survival year 1, >70% year 3",
-        "Establish 10 permanent monitoring plots (20x20m), measure tree growth/survival annually, document cultural plant recovery, photo documentation, elder assessment of cultural access improvements"
-      ],
-      "expected_length": "3-5 sentences",
-      "scoring_weight": 10
-    },
-    {
-      "id": "carbon_quantification",
-      "category": "strengthen",
-      "question": "Do you have a methodology to quantify carbon or GHG benefits?",
-      "why": "Not required, but projects with quantification methods receive priority",
-      "required": false,
-      "examples": [
-        "Will use BC Ministry TIPSY models to compare carbon storage trajectories between retention and clearcut scenarios over 100-year rotation",
-        "Partnering with UBC Faculty of Forestry for carbon assessment using CBM-CFS3 model - will quantify avoided emissions from reduced slash burning",
-        "Working with RPF to estimate: (1) avoided emissions from no slash burn = 250 tonnes CO2e, (2) additional carbon in retained trees = 1,200 tonnes CO2 over 50 years"
+        "Will use BC Ministry of Forests TIPSY growth and yield models to compare carbon storage trajectories between our retention approach (15-20% retention) and conventional clearcut over 100-year rotation period",
+        "Partnering with UBC Faculty of Forestry Dr. [Name] for carbon assessment using CBM-CFS3 model - will quantify avoided emissions from reduced slash burning plus long-term carbon benefits",
+        "Working with our RPF to estimate: (1) avoided emissions from eliminating slash burn = 250 tonnes CO2e, (2) additional carbon maintained in retained trees = 1,200 tonnes CO2 over 50 years, using standard BC carbon factors"
       ],
       "competitive_advantage": "+20% selection priority",
       "scoring_weight": 5
@@ -388,35 +202,107 @@
       "id": "project_duration",
       "category": "project_specific",
       "question": "Will this be a 1-year or 2-year project? What are your key milestones by quarter?",
-      "why": "SFI needs detailed timeline - funds must be spent by March 31, 2027",
+      "why": "SFI needs detailed timeline - funds must be spent by March 31, 2027. Be specific about timing.",
       "required": true,
-      "help_text": "Be specific about timing - when will each major activity happen?",
+      "help_text": "Be specific about WHEN each major activity happens. Consider seasonal constraints, permitting time, community schedules.",
+      "example_weak": "2-year project with planting in year 1 and monitoring in year 2.",
+      "example_strong": "2-year project: Year 1 Q1-Q2 (Jan-Jun 2025): Finalize planning, procurement, obtain permits. Q3 (Jul-Sep): Site prep 250ha. Q4 (Oct-Dec): Initial planting 150ha, establish monitoring plots, interim report. Year 2 Q1-Q2 (Jan-Jun 2026): Expansion planting 350ha. Q3 (Jul-Sep): Mid-season monitoring. Q4 (Oct-Dec): Final monitoring, data analysis, comprehensive reporting. March 2027: Project closeout, all funds expended.",
+      "why_strong": "Quarter-by-quarter detail, specific activities, acknowledges deadline, shows realistic planning",
+      "expected_length": "4-6 sentences with timing",
+      "scoring_weight": 8
+    },
+    {
+      "id": "permits_identified",
+      "category": "readiness",
+      "question": "Have you identified what permits or authorizations you'll need? Do you have them or know the process to obtain them?",
+      "why": "Permits cause major delays if not planned for - this checks your regulatory preparedness",
+      "required": true,
+      "help_text": "Common forestry permits: Cutting permit, Road Use Permit, Archaeological overview/permit if ground disturbance, Species at Risk assessment if applicable",
       "examples": [
-        "2-year: Year 1 Q1-Q2: Planning, procurement, BCR/permits. Q3-Q4: Site prep, initial planting 300ha. Year 2 Q1-Q2: Expansion 200ha. Q3-Q4: Monitoring, final report",
-        "1-year: Q1 (Jan-Mar): Finalize planning, hire crew. Q2 (Apr-Jun): Implementation phase 1. Q3 (Jul-Sep): Implementation phase 2. Q4 (Oct-Dec): Monitoring, reporting"
+        "✅ IDENTIFIED: Need cutting permit (our RPF is preparing, 8-12 week process), archaeological overview (scheduled with archaeologist for February), no species at risk confirmed. Total timeline 3 months.",
+        "⏳ IN PROGRESS: Coordinating with existing TFL permit framework through our partner company - they handle cutting permits. Need separate archaeological clearance - consultant identified.",
+        "❌ NOT YET: Haven't looked into permits - will consult with RPF in January to identify all needs and timelines"
       ],
-      "expected_length": "3-5 sentences with timing details",
+      "expected_length": "2-4 sentences",
+      "scoring_weight": 10
+    },
+    {
+      "id": "community_consultation",
+      "category": "readiness",
+      "question": "Have you consulted with your community about this project? What was the response?",
+      "why": "Community support is essential for Chief & Council approval and project success",
+      "required": true,
+      "help_text": "Describe any community meetings, surveys, elder consultations you've done. Quantify participation and support.",
+      "examples": [
+        "Presented at community meeting October 15 - 35 members attended, strong support expressed especially from elders regarding cultural site protection. Follow-up field tour with 12 elders on October 28 to identify priority areas. Survey of 50 members: 88% support project priorities.",
+        "Conducted two community engagement sessions (Sept 20 and Oct 5) with total 45 participants. Specific consultation with 8 elders on traditional cedar harvesting areas - unanimous support. Youth workshop with 15 participants - high interest in employment opportunities."
+      ],
+      "expected_length": "3-5 sentences with participation numbers",
+      "scoring_weight": 8
+    },
+    {
+      "id": "timeline_feasibility",
+      "category": "readiness",
+      "question": "Can you realistically complete this project and spend all funds by March 31, 2027? Walk through the logistics.",
+      "why": "This is a HARD DEADLINE - SFI needs confidence you can execute in time",
+      "required": true,
+      "help_text": "Think through: BCR timing, permit delays, seasonal planting windows, contractor availability, weather risks, reporting time",
+      "example_weak": "Yes, we can do it in the timeframe.",
+      "example_strong": "Yes - realistic timeline: Application submission January 2025, anticipated approval March 2025. Immediately begin permit applications (3-month process) and procurement. Field activities begin June 2025 (optimal planting window). Year 1: 250ha site prep + planting complete by October 2025. Year 2: Expansion 350ha May-August 2026, monitoring through fall 2026. Final reporting Q1 2027. All expenditures by March 15, 2027 (2-week buffer before deadline). Timeline accounts for: seasonal constraints (May-October for field work), permit processing (3 months), Chief & Council schedules (monthly meetings), weather contingency (2-week buffer).",
+      "why_strong": "Month-by-month detail, accounts for all constraints, shows buffer planning, demonstrates realistic understanding",
+      "expected_length": "4-6 sentences walking through timeline",
+      "scoring_weight": 10
+    },
+    {
+      "id": "rpf_involvement",
+      "category": "readiness",
+      "question": "Do you have an RPF (Registered Professional Forester) involved or identified for this project?",
+      "why": "Technical forestry work requires RPF oversight - confirms you have or can access professional capacity",
+      "required": true,
+      "help_text": "RPF needed for: harvest prescriptions, silviculture plans, compliance monitoring. Can be staff RPF or consultant.",
+      "examples": [
+        "✅ SECURED: Sarah Johnson RPF is our staff Lands Manager, will oversee all forestry activities and sign prescriptions",
+        "✅ CONTRACTED: Have agreement with Mike Smith RPF (local consultant) - $8,000 contract for prescription development and monitoring oversight",
+        "⏳ IDENTIFIED: Negotiating with 2 local RPFs for contract work - expect to finalize by January",
+        "❌ PARTNERSHIP: Our forest company partner (Mosaic) will provide RPF support as in-kind contribution"
+      ],
+      "expected_length": "1-2 sentences",
+      "scoring_weight": 7
+    },
+    {
+      "id": "previous_grants",
+      "category": "strengthen",
+      "question": "Has your organization successfully managed grants before? Provide specific examples if possible.",
+      "why": "Demonstrates grant management capacity and track record - reassures funder you can deliver and report properly",
+      "required": false,
+      "examples": [
+        "Yes - Successfully completed $180K FWCP watershed restoration grant (2022-2024), delivered on budget with strong final report. Also managed $150K BCSRIF project (2023) - completed 6 months early.",
+        "Multiple grants totaling $400K+ over 5 years: Habitat Conservation Trust ($75K), BCSRIF ($150K), Pacific Salmon Foundation ($125K). All final reports submitted on time, no compliance issues.",
+        "First major environmental grant, but our Lands Manager has 10 years experience managing $2M+ in federal infrastructure grants at previous Nation - proven capacity for complex reporting and financial accountability"
+      ],
+      "competitive_advantage": "Demonstrates proven capacity - reduces funder risk",
       "scoring_weight": 8
     },
     {
       "id": "budget_complete",
       "category": "readiness",
-      "question": "Do you have a detailed budget spreadsheet prepared with line items and costs?",
-      "why": "Checks if budget is actually ready or still rough estimates",
+      "question": "Do you have a detailed budget spreadsheet prepared with line items, unit costs, and contractor quotes?",
+      "why": "Checks if budget is actually complete (not just rough estimates) - essential for submission",
       "required": true,
+      "help_text": "SFI wants to see: line-item detail, unit costs ($/ha, $/tree), actual quotes from contractors, hourly rates for staff, equipment rental rates",
       "examples": [
-        "Yes - Excel spreadsheet with all line items, quotes from contractors, hourly rates for staff",
-        "Mostly complete - Have contractor quotes and staff costs, need to finalize equipment rental rates",
-        "Not yet - Have overall categories and estimates, need to get formal quotes"
+        "✅ COMPLETE: Yes - Excel spreadsheet with 45 line items, 3 contractor quotes for planting/site prep, equipment rental rates confirmed, staff hourly rates based on current positions",
+        "⏳ MOSTLY: Have detailed categories and contractor quotes for major items ($180K of $250K). Need to finalize: equipment rental rates, elder honoraria amounts, training costs. Will complete by [date]",
+        "❌ ROUGH: Currently have overall categories with estimates ($250K ballpark). Need to: get contractor quotes, detail staff costs, break down equipment needs. Plan to complete detailed budget in January."
       ],
-      "expected_length": "1-2 sentences",
+      "expected_length": "1-3 sentences describing status",
       "scoring_weight": 10
     },
     {
       "id": "partnership_letters_status",
       "category": "readiness",
-      "question": "If you have partners, do you have commitment letters from them ready or in progress?",
-      "why": "Partner letters strengthen applications significantly - checks actual status",
+      "question": "If you have partners mentioned, do you have commitment letters from them - ready, in progress, or not started?",
+      "why": "Partnership letters strengthen applications significantly - checks actual status not just intent",
       "required": false,
       "conditional": {
         "field": "partners",
@@ -424,63 +310,109 @@
         "value": ""
       },
       "examples": [
-        "Yes - Letter of support from Mosaic Forest Management already signed",
-        "In progress - Drafted letter, awaiting signature from UBC professor",
-        "Not yet - Will request letters once BCR is approved"
+        "✅ READY: Letter from Mosaic Forest Management signed December 1, commits to equipment rental support and RPF services (attached)",
+        "⏳ IN PROGRESS: Drafted letter from UBC, awaiting professor's signature (expect by Dec 20)",
+        "❌ NOT YET: Partners verbally committed (Mosaic, UBC) - will request formal letters after BCR is approved in January"
       ],
-      "expected_length": "1 sentence",
+      "expected_length": "1-2 sentences per partner",
       "scoring_weight": 5
     },
     {
       "id": "reporting_capacity",
       "category": "readiness",
-      "question": "Who will be responsible for interim and final reporting to SFI? Do they have capacity?",
-      "why": "Reporting is mandatory - confirms you've thought about this commitment",
+      "question": "Who will be responsible for interim and final reporting to SFI? Do they have capacity and experience?",
+      "why": "Reporting is mandatory requirement - confirms you've planned for this obligation",
       "required": true,
+      "help_text": "Consider: technical writing skills, familiarity with grant reporting, time availability, past experience",
       "examples": [
-        "Project Manager will lead reporting with support from RPF for technical sections - both have experience with government grant reporting",
-        "Lands Manager will coordinate - has completed 5+ final reports for federal grants",
-        "Will hire part-time report writer (included in budget) to support Project Coordinator"
+        "Project Manager Sarah Johnson will lead reporting with technical input from RPF and cultural sections from elders. Sarah has completed 12+ grant final reports over 8 years - strong track record.",
+        "Lands Manager coordinates reporting - has done 5+ federal grant reports. Will hire part-time report writer (included in budget at $5K) to support comprehensive final report.",
+        "Project Coordinator will handle interim reports (monthly updates). For final report will engage external writer with First Nations grant experience (budgeted $8K)."
       ],
-      "expected_length": "1-2 sentences",
+      "expected_length": "2-3 sentences",
       "scoring_weight": 6
     },
     {
       "id": "sfi_collaboration",
       "category": "strengthen",
-      "question": "Are you open to collaborating with SFI staff and sharing data/lessons learned throughout the project?",
-      "why": "SFI requires collaborative engagement - they want active partners, not just grant recipients",
+      "question": "Are you open to collaborating with SFI staff, hosting site visits, and sharing data/lessons learned throughout the project?",
+      "why": "SFI requires 'collaborative engagement' - they want active partners who contribute to broader learning, not just grant recipients",
       "required": true,
       "examples": [
-        "Yes - Welcome SFI site visits, happy to share monitoring data, interested in presenting at SFI workshops",
-        "Absolutely - Excited to contribute to broader climate smart forestry knowledge base, open to adaptive management based on SFI feedback"
+        "Absolutely - Welcome SFI site visits anytime, happy to share all monitoring data, interested in presenting results at SFI workshops or conferences. Open to adaptive management based on SFI technical feedback.",
+        "Yes - Excited to contribute to broader climate smart forestry knowledge base. Willing to host field tours for other First Nations, participate in SFI webinars sharing lessons learned, provide project updates for SFI communications."
       ],
-      "expected_length": "1-2 sentences",
+      "expected_length": "2-3 sentences",
       "scoring_weight": 5
+    },
+    {
+      "id": "partnership_collaboration",
+      "category": "strengthen",
+      "question": "Are you partnering with any forest companies, research institutions, or other organizations? Describe their specific role and contribution.",
+      "why": "SFI encourages partnerships with forest management companies - collaboration strengthens technical capacity and demonstrates broader support",
+      "required": false,
+      "help_text": "Be specific about what each partner contributes (technical, equipment, expertise, funding, data)",
+      "examples": [
+        "Partnership with Mosaic Forest Management (manages adjacent TFL): Providing (1) RPF technical support (in-kind $15K value), (2) equipment rental at cost ($8K), (3) training opportunities for our staff, (4) access to their carbon modeling tools. Letter of commitment attached.",
+        "Multi-partner: (1) UBC Faculty of Forestry - Dr. Smith providing carbon assessment methodology and grad student support ($20K in-kind), (2) Huu-ay-aht First Nation - sharing lessons from their 2023 cedar project and field tour for our team, (3) SILVA21 network - knowledge sharing platform and conference presentation opportunities"
+      ],
+      "competitive_advantage": "+15% selection priority for forest company partnerships, demonstrates collaboration capacity",
+      "scoring_weight": 8
+    },
+    {
+      "id": "matching_contributions",
+      "category": "strengthen",
+      "question": "Do you have any matching funding (cash) or in-kind contributions? Describe and quantify if possible.",
+      "why": "Matching contributions valued in selection criteria - shows broader support and leverages SFI investment",
+      "required": false,
+      "help_text": "Include: cash from other funders, own-source revenue, volunteer hours, donated services/equipment, partner contributions",
+      "examples": [
+        "Cash match: $50K from Nation's own-source revenue (forestry revenues). In-kind: Community volunteer hours estimated 400 hours ($10K value), RPF services from partner company ($15K value), equipment use ($8K). Total project value: $233K (leverage ratio 1.55:1)",
+        "In-kind contributions: Elder knowledge sharing (48 hours @ $50/hr = $2,400), community volunteer labor (300 hours @ $25/hr = $7,500), donated equipment use from contractor ($5,000), RPF technical review (donated, $8,000 value). Total in-kind: $22,900"
+      ],
+      "competitive_advantage": "Strengthens budget & cost-effectiveness scoring, shows community investment",
+      "scoring_weight": 7
+    },
+    {
+      "id": "knowledge_sharing_commitment",
+      "category": "strengthen",
+      "question": "How specifically will you share learnings from this project with other First Nations or forest managers?",
+      "why": "SFI values knowledge sharing and scaling impact - want to see concrete plans not just willingness",
+      "required": true,
+      "help_text": "Think about: conference presentations, field tours, protocol development, case studies, workshops",
+      "examples": [
+        "Committed to: (1) Presenting results at SILVA21 annual meeting May 2027, (2) Hosting field tour for 3-5 neighboring Nations in fall 2026, (3) Developing written protocol guide for coastal cedar enhancement, (4) Publishing case study on BC First Nations Forestry Council website, (5) Webinar presentation for SFI Climate Smart Forestry network",
+        "Will develop comprehensive project documentation including: photo-documented field guide to retention harvest techniques, cedar enhancement protocol adaptable to different BEC zones, lessons learned report. Plan to present at: BC First Nations Forestry Council AGM, SFI workshops, and host minimum 2 field days for other Nations (budgeted $3K for hosting costs)."
+      ],
+      "expected_length": "3-5 specific commitments",
+      "scoring_weight": 7
     }
   ],
   
   "checklist_items": {
     "critical": [
       {
-        "item": "Band Council Resolution",
-        "why": "Required for all First Nation applications",
+        "item": "Band Council Resolution (BCR)",
+        "why": "Required for ALL First Nation grant applications",
+        "explainer": "Official Chief & Council decision authorizing the application",
         "time_estimate": "2-4 weeks",
         "template_available": true,
-        "priority": "HIGH"
+        "priority": "HIGH",
+        "how_to_get": "Draft BCR → Present at C&C meeting → Get approval & signatures"
       },
       {
-        "item": "Letter from Chief & Council",
-        "why": "SFI explicitly requires this",
+        "item": "Letter of support from Chief & Council",
+        "why": "SFI explicitly requires this in application",
         "time_estimate": "1-2 weeks",
+        "can_combine": "Often combined with BCR process",
         "template_available": true,
         "priority": "HIGH"
       },
       {
         "item": "Proof of forest management authority",
-        "why": "Must demonstrate decision-making responsibility",
-        "time_estimate": "1 day",
-        "where_to_find": "Community Forest Agreement or tenure documents",
+        "why": "Must demonstrate decision-making responsibility for forests",
+        "time_estimate": "1 day (if documents exist)",
+        "where_to_find": "Community Forest Agreement, Treaty documents, or TFL partnership agreement",
         "priority": "HIGH"
       }
     ],
@@ -489,85 +421,84 @@
         "item": "Forest classification and age class data",
         "why": "Required in application narrative",
         "time_estimate": "1 week",
-        "how_to_get": "Contact RPF or use BC BEC maps",
-        "priority": "MEDIUM",
-        "conditional": {
-          "field": "project_types",
-          "operator": "contains",
-          "value": "forest"
-        }
+        "how_to_get": "Contact your RPF, use BC government BEC maps, or review existing forest inventory",
+        "priority": "MEDIUM"
       },
       {
         "item": "Detailed budget spreadsheet with line items",
-        "why": "SFI requires itemized budget with clear costs",
-        "time_estimate": "1 week",
+        "why": "SFI requires itemized budget with clear costs and milestones",
+        "time_estimate": "1-2 weeks (get contractor quotes)",
         "template_available": true,
         "priority": "HIGH"
       },
       {
         "item": "Project location map or coordinates",
-        "why": "Shows specific geography and scale",
+        "why": "Shows specific geography and helps reviewers understand scale",
         "time_estimate": "2-3 days",
-        "how_to_get": "Use Google Earth, GIS data, or hand-drawn map with GPS points",
+        "how_to_get": "Use Google Earth, export from GIS, or hand-draw map with GPS points marked",
         "priority": "MEDIUM"
       },
       {
         "item": "Milestones and deliverables timeline",
-        "why": "SFI wants to see clear project schedule",
+        "why": "SFI wants clear project schedule tied to budget",
         "time_estimate": "3-5 days",
         "template_available": true,
         "priority": "HIGH"
       },
       {
         "item": "Permits identified (even if not obtained yet)",
-        "why": "Shows you understand regulatory requirements",
-        "time_estimate": "1 week",
-        "how_to_get": "Consult with RPF, check with local FLNRORD office",
+        "why": "Shows you understand regulatory requirements and timeline",
+        "time_estimate": "1 week (consultation with RPF)",
+        "how_to_get": "Consult with RPF or local FLNRORD office about requirements",
         "priority": "MEDIUM"
       }
     ],
     "strengthen": [
       {
         "item": "Carbon quantification methodology",
-        "why": "+20% competitive advantage",
+        "why": "+20% competitive advantage - not required but significant boost",
         "time_estimate": "2-3 weeks",
+        "how_to_get": "Work with RPF to use TIPSY models, or partner with university for CBM-CFS3 analysis",
         "optional": true,
         "impact": "HIGH"
       },
       {
         "item": "Photos of current site conditions",
-        "why": "Visual evidence helps reviewers understand context",
+        "why": "Visual evidence helps reviewers understand context - simple but effective",
         "time_estimate": "1 day",
+        "how_to_get": "Take site photos showing current conditions, representative stands, cultural sites (if appropriate)",
         "optional": true,
         "impact": "MEDIUM"
       },
       {
-        "item": "Partnership letters from forest companies or institutions",
-        "why": "+15% competitive advantage",
+        "item": "Partnership letters from forest companies or research institutions",
+        "why": "+15% competitive advantage for forest company partnerships",
         "time_estimate": "1-2 weeks",
+        "template_available": true,
         "optional": true,
         "impact": "HIGH"
       },
       {
         "item": "Community engagement documentation",
-        "why": "Demonstrates community support and buy-in",
+        "why": "Demonstrates community support and buy-in beyond just Chief & Council",
         "time_estimate": "1 week",
-        "how_to_get": "Meeting notes, survey results, photos from community sessions",
+        "how_to_get": "Compile: meeting notes, attendance lists, survey results, photos from community sessions",
         "optional": true,
         "impact": "MEDIUM"
       },
       {
         "item": "Examples of previous successful projects",
-        "why": "Builds credibility and demonstrates capacity",
+        "why": "Builds credibility - shows you've delivered before",
         "time_estimate": "2-3 days",
-        "how_to_get": "Summarize past projects with outcomes, photos, reports",
+        "how_to_get": "Summarize 1-2 past projects: objectives, outcomes, photos, any metrics/results",
         "optional": true,
         "impact": "MEDIUM"
       },
       {
         "item": "RPF technical review of your approach",
-        "why": "Validates technical feasibility and methods",
+        "why": "Third-party validation of technical feasibility and methods",
         "time_estimate": "1 week",
+        "how_to_get": "Have your RPF or consultant review and comment on technical soundness",
         "optional": true,
         "impact": "MEDIUM"
       }
