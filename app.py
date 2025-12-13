@@ -4,6 +4,8 @@ import requests
 import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
+from funding_templates.program_mapper import has_template
+from grant_readiness_page import show_grant_readiness_page
 
 # ---------------------------------------------------------------------
 # Airtable config
@@ -230,6 +232,11 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
 # ---------------------------------------------------------------------
 st.set_page_config(page_title="Funding Matcher MVP", layout="wide")
 
+# Check if we should show Grant Readiness page
+if st.session_state.get('page') == 'grant_readiness':
+    show_grant_readiness_page()
+    st.stop()
+
 st.markdown(
     """
     <style>
@@ -249,7 +256,7 @@ st.markdown(
     .block-container { padding: 2rem 2.5rem 3rem; border-radius: 18px; background: rgba(15, 23, 42, 0.75); }
     textarea, input, select, .stTextInput > div > div > input, .stTextArea textarea, .stMultiSelect div[data-baseweb="input"] {
         border-radius: 12px !important;
-        border: 1px solid #1f2937 !important;
+        border-radius: 1px solid #1f2937 !important;
         background-color: #0b1221 !important;
         color: #e2e8f0 !important;
         transition: border-color 0.2s ease;
@@ -374,8 +381,8 @@ with st.sidebar:
         1. Tell us **who you are** and **what the project is**  
         2. Click **Find funding matches**  
         3. Your project is **saved to Airtable**  
-        4. You'll see funding programs **ranked by match score**  
-        5. Top match is flagged for an AI **Deep Dive Brief** (status = `pending`)
+        4. You'll see funding programs **ranked by match score**
+        5. Click **Deep Dive** for AI analysis OR **Grant Readiness** for application questions
         """
     )
 
@@ -387,7 +394,7 @@ st.markdown(
         <p class="muted">Tell us about your project and get a short list of programs, instantly scored against PRD-aligned criteria.</p>
         <div class="pill" style="margin-top: 8px;">
             <span class="dot"></span>
-            Save to Airtable automatically &middot; AI deep dive queued on top match
+            Save to Airtable automatically &middot; AI deep dive OR grant readiness
         </div>
     </div>
     """,
@@ -509,6 +516,22 @@ st.markdown("---")
 # ---------------------------------------------------------------------
 if st.button("🔍 Find funding matches"):
 
+    # Store user intake in session state for template system
+    st.session_state['user_intake'] = {
+        "organization": org_name,
+        "name": name,
+        "email": email,
+        "applicant_type": applicant_type,
+        "region": region,
+        "budget_range": budget_range,
+        "project_types": project_types,
+        "themes": themes,
+        "stage": stage,
+        "project_title": project_title,
+        "description": description,
+        "partners": partners,
+    }
+
     # 1) Save project submission (set Deep Dive Status = pending explicitly)
     fields = {
         "Name": name,
@@ -567,6 +590,9 @@ if st.button("🔍 Find funding matches"):
             # keep Deep Dive Status as 'pending' so your Make.com watcher can fire
         }
         update_project_submission(submission_id, update_fields)
+
+    # Store matches in session for navigation
+    st.session_state['matches'] = df
 
     # 6) Display results
     st.markdown(
@@ -698,5 +724,33 @@ if st.button("🔍 Find funding matches"):
             if link_bits:
                 st.markdown("**How to apply**")
                 st.write(" • ".join(link_bits))
+
+            # Action buttons
+            st.markdown("---")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Deep Dive button (existing functionality)
+                if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}"):
+                    st.session_state['selected_program'] = row.to_dict()
+                    # Your existing Make.com trigger logic would go here
+                    st.info("🤖 Deep Dive AI report generation triggered! (Your Make.com automation)")
+            
+            with col2:
+                # Grant Readiness button (new functionality)
+                template_exists = has_template(program_name)
+                
+                if template_exists:
+                    if st.button(f"📋 Grant Readiness", key=f"readiness_{idx}", type="primary"):
+                        st.session_state['selected_program'] = row.to_dict()
+                        st.session_state.page = 'grant_readiness'
+                        st.rerun()
+                else:
+                    st.button(
+                        f"📋 Grant Readiness (Coming Soon)",
+                        key=f"readiness_{idx}",
+                        disabled=True,
+                        help="Template not yet available for this program"
+                    )
 
             st.markdown("</div>", unsafe_allow_html=True)
