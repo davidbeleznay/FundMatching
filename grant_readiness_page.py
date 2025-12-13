@@ -51,7 +51,7 @@ def show_grant_readiness_page():
         <div class="hero">
             <p class="eyebrow">Grant Readiness Assessment</p>
             <h1>🎯 {program_name}</h1>
-            <p class="muted">Answer these questions to strengthen your application and see what documents you'll need.</p>
+            <p class="muted">Answer these questions to see how close you are to submitting a strong application.</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -64,6 +64,27 @@ def show_grant_readiness_page():
     if 'readiness_responses' not in st.session_state:
         st.session_state.readiness_responses = {}
     
+    # Calculate score upfront to show progress
+    score = template.calculate_readiness_score(st.session_state.readiness_responses)
+    
+    # Show readiness score at top
+    st.markdown("---")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("📊 Readiness Score", f"{score:.0f}%")
+    with col2:
+        answered = len([r for r in st.session_state.readiness_responses.values() if r])
+        total = len([q for q in questions if q.get('required')])
+        st.metric("✅ Questions Answered", f"{answered}/{total}")
+    with col3:
+        if score >= 80:
+            st.success("Ready to apply!")
+        elif score >= 50:
+            st.info("Getting close...")
+        else:
+            st.warning("Needs work")
+    
     # Display questions by category
     st.markdown("---")
     
@@ -74,7 +95,7 @@ def show_grant_readiness_page():
             <div class="section-number">1</div>
             <div>
                 <h3>🚨 Critical Requirements</h3>
-                <p class="section-sub">These are must-haves for your application</p>
+                <p class="section-sub">Must-haves for your application - start here</p>
             </div>
         </div>
         """,
@@ -85,14 +106,35 @@ def show_grant_readiness_page():
     for q in critical_questions:
         show_question(q, template_id)
     
-    # Project-specific questions
+    # Readiness/Status questions (NEW CATEGORY!)
     st.markdown(
         """
         <div class="section-header">
             <div class="section-number">2</div>
             <div>
+                <h3>✓ Application Readiness Status</h3>
+                <p class="section-sub">Do you actually have what's needed to submit?</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    readiness_questions = [q for q in questions if q['category'] == 'readiness']
+    if readiness_questions:
+        for q in readiness_questions:
+            show_question(q, template_id)
+    else:
+        st.info("No readiness check questions for this program yet")
+    
+    # Project-specific questions
+    st.markdown(
+        """
+        <div class="section-header">
+            <div class="section-number">3</div>
+            <div>
                 <h3>📝 Project-Specific Details</h3>
-                <p class="section-sub">Information specific to your project</p>
+                <p class="section-sub">Information specific to your project and approach</p>
             </div>
         </div>
         """,
@@ -107,10 +149,10 @@ def show_grant_readiness_page():
     st.markdown(
         """
         <div class="section-header">
-            <div class="section-number">3</div>
+            <div class="section-number">4</div>
             <div>
                 <h3>💪 Strengthen Your Application</h3>
-                <p class="section-sub">Optional but highly recommended</p>
+                <p class="section-sub">Optional but highly recommended - these improve competitiveness</p>
             </div>
         </div>
         """,
@@ -121,21 +163,16 @@ def show_grant_readiness_page():
     for q in strengthen_questions:
         show_question(q, template_id)
     
-    # Readiness Score & Actions
+    # Bottom action bar
     st.markdown("---")
+    
+    # Recalculate score
     score = template.calculate_readiness_score(st.session_state.readiness_responses)
     
-    col1, col2, col3 = st.columns([2, 1, 1])
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("📊 Application Readiness", f"{score:.0f}%")
-        
-        if score < 50:
-            st.warning("⚠️ Need more complete answers to strengthen your application")
-        elif score < 80:
-            st.info("📈 You're making progress! A few more details will help")
-        else:
-            st.success("✅ You're ready to apply!")
+        st.metric("📊 Final Score", f"{score:.0f}%")
     
     with col2:
         if st.button("📋 View Checklist"):
@@ -144,8 +181,8 @@ def show_grant_readiness_page():
     
     with col3:
         # Generate Application Example button
-        if st.button("📄 Generate Example", type="primary"):
-            if score >= 50:
+        if score >= 40:
+            if st.button("📄 Generate Example", type="primary"):
                 application_text = generate_sfi_application(
                     user_intake,
                     st.session_state.readiness_responses,
@@ -154,37 +191,54 @@ def show_grant_readiness_page():
                 
                 # Offer download
                 st.download_button(
-                    label="💾 Download Application Example",
+                    label="💾 Download Application",
                     data=application_text,
-                    file_name=f"SFI_Application_Example_{user_intake.get('organization', 'Project').replace(' ', '_')}.txt",
+                    file_name=f"SFI_Application_{user_intake.get('organization', 'Project').replace(' ', '_')}.txt",
                     mime="text/plain"
                 )
-                
-                st.success("✅ Application example generated! Click above to download.")
-                st.info("📝 **This is a template** - review and customize before submitting to SFI.")
-            else:
-                st.warning("⚠️ Please answer more questions (need 50%+ readiness) to generate a meaningful application example.")
+        else:
+            st.button(
+                "📄 Generate Example",
+                disabled=True,
+                help=f"Answer more questions to unlock (need 40%+ readiness, currently {score:.0f}%)"
+            )
+    
+    with col4:
+        if st.button("← Back"):
+            st.session_state.page = 'matches'
+            st.rerun()
+    
+    # Show readiness interpretation
+    st.markdown("")
+    if score < 40:
+        st.error("🔴 **Not Ready** - Significant work needed before you can submit")
+        st.caption("Focus on Critical and Readiness sections first")
+    elif score < 60:
+        st.warning("🟡 **Getting Started** - You have the basics but need more detail")
+        st.caption("Complete Project-Specific questions and start on Strengthen items")
+    elif score < 80:
+        st.info("🟠 **Almost Ready** - Application is coming together, refine and strengthen")
+        st.caption("Review all answers, add Strengthen items to improve competitiveness")
+    else:
+        st.success("🟢 **Ready to Submit** - You have a strong, complete application!")
+        st.caption("Do final review, gather supporting documents, and submit")
     
     # Show checklist if toggled
     if st.session_state.get('show_checklist'):
         show_checklist_section(template, user_intake)
-    
-    # Navigation
-    st.markdown("---")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("← Back to matches"):
-            st.session_state.page = 'matches'
-            st.rerun()
-    with col2:
-        if st.button("💾 Save Progress"):
-            st.success("Progress saved in your browser session!")
 
 
 def show_question(q: dict, template_id: str):
     """Display a single question with help text and examples"""
     
-    with st.expander(f"**{q['question']}**", expanded=False):
+    # Determine if question is answered
+    response_key = f"{template_id}_{q['id']}"
+    is_answered = response_key in st.session_state and st.session_state[response_key]
+    
+    # Add checkmark to title if answered
+    title_prefix = "✅ " if is_answered else ""
+    
+    with st.expander(f"{title_prefix}**{q['question']}**", expanded=not is_answered):
         # Why we ask
         st.caption(f"**Why we ask:** {q['why']}")
         
@@ -207,8 +261,6 @@ def show_question(q: dict, template_id: str):
             st.success(f"🎯 **{q['competitive_advantage']}**")
         
         # Answer input
-        response_key = f"{template_id}_{q['id']}"
-        
         if q.get('format') == 'List 2-4 people with: Name, Role, 1-2 sentence background':
             response = st.text_area(
                 "Your answer:",
@@ -247,7 +299,7 @@ def show_checklist_section(template, user_intake):
             <div class="section-number">✓</div>
             <div>
                 <h3>📋 Your Application Checklist</h3>
-                <p class="section-sub">Documents and tasks you'll need</p>
+                <p class="section-sub">Documents and tasks you'll need to submit</p>
             </div>
         </div>
         """,
