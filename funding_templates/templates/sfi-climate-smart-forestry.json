@@ -1,0 +1,221 @@
+{
+  "program_id": "sfi-climate-smart-forestry",
+  "program_name": "SFI Indigenous-Led Climate Smart Forestry",
+  "template_version": "1.0",
+  "last_updated": "2024-12-13",
+  
+  "questions": [
+    {
+      "id": "org_eligibility",
+      "category": "critical",
+      "question": "Can you describe your First Nation's governance structure and forest management authority?",
+      "why": "SFI needs to verify you're a First Nation/Indigenous org with decision-making responsibilities for forests in Canada",
+      "required": true,
+      "triggers": ["First Nation", "Indigenous"],
+      "help_text": "Example: We are [Band Name] with a Community Forest Agreement covering 15,000 hectares. Our Lands Department has authority over forest management decisions as delegated by Chief and Council.",
+      "expected_length": "2-3 sentences",
+      "scoring_weight": 20
+    },
+    {
+      "id": "forest_classification",
+      "category": "project_specific",
+      "question": "What is the forest classification and age class of your project area?",
+      "why": "SFI wants to understand the forest type and stand maturity to assess project approach",
+      "required": true,
+      "triggers": ["forest", "restoration", "cedar", "planting", "harvest"],
+      "help_text": "Include: biogeoclimatic zone, dominant tree species, age class range",
+      "examples": [
+        "Coastal Western Hemlock (CWH), 60-100 year old second growth with scattered old-growth legacy trees",
+        "Interior Douglas-fir (IDF), young forest 20-40 years with mixed species composition"
+      ],
+      "smart_default": {
+        "Vancouver Island": "Likely CWH (Coastal Western Hemlock) zone",
+        "Barkley Sound": "Coastal Western Hemlock with cedar component",
+        "Interior": "Check if IDF, ICH, or SBS biogeoclimatic zone"
+      },
+      "expected_length": "1-2 sentences",
+      "scoring_weight": 10
+    },
+    {
+      "id": "scalability",
+      "category": "project_specific",
+      "question": "Your project covers {project_size} hectares. How could this methodology be scaled to 20,000+ hectares or replicated elsewhere?",
+      "why": "SFI prioritizes projects relevant for large forest managers - they want to see broader applicability",
+      "required": true,
+      "conditional": {
+        "field": "project_size",
+        "operator": "<",
+        "value": 20000
+      },
+      "help_text": "Focus on: methodology transferability, cost-effectiveness at scale, other Nations/areas that could use this approach",
+      "examples": [
+        "Our TK + LiDAR protocol for cedar site identification can be applied by any Nation with forest tenure and access to provincial LiDAR data",
+        "Approach designed as modular framework - restoration prescriptions can be adapted to different biogeoclimatic zones across coastal BC"
+      ],
+      "expected_length": "3-5 sentences",
+      "scoring_weight": 15
+    },
+    {
+      "id": "cultural_benefits",
+      "category": "strengthen",
+      "question": "What specific cultural and socioeconomic benefits will this project provide to your community?",
+      "why": "ECCC funding requires demonstration of cultural value enhancement - this is a key selection criterion",
+      "required": true,
+      "examples": [
+        "Enhanced access to traditional medicines (devil's club, cedar bark, berries)",
+        "Youth employment and forestry training - minimum 3 positions",
+        "Protection of ceremonial bark-harvesting sites",
+        "Strengthening intergenerational traditional knowledge transmission"
+      ],
+      "expected_length": "3-5 bullet points",
+      "scoring_weight": 15
+    },
+    {
+      "id": "climate_benefits",
+      "category": "project_specific",
+      "question": "What measurable climate benefits will this project provide (emissions reduction, carbon storage, or climate adaptation)?",
+      "why": "Climate benefits are required for ECCC funding - be specific about mechanism",
+      "required": true,
+      "examples": [
+        "Retention harvest reduces emissions vs. clearcut by avoiding slash burning",
+        "Climate-adapted species selection increases forest resilience to warmer, drier future",
+        "Structural diversification creates more fire-resilient forest stands"
+      ],
+      "expected_length": "2-4 sentences",
+      "scoring_weight": 15
+    },
+    {
+      "id": "team_expertise",
+      "category": "strengthen",
+      "question": "Who are the key team members and what relevant experience do they bring?",
+      "why": "SFI evaluates 'demonstrated knowledge, experience, and expertise'",
+      "required": true,
+      "format": "List 2-4 people with: Name, Role, 1-2 sentence background",
+      "help_text": "Include: RPF/forestry professionals, elders/knowledge keepers, project managers",
+      "expected_length": "2-4 team members",
+      "scoring_weight": 10
+    },
+    {
+      "id": "carbon_quantification",
+      "category": "strengthen",
+      "question": "Do you have a methodology to quantify carbon or GHG benefits?",
+      "why": "Not required, but projects with quantification methods receive priority",
+      "required": false,
+      "examples": [
+        "Will use BC Ministry TIPSY models to compare carbon storage",
+        "Partnering with UBC for carbon assessment using CBM-CFS3",
+        "Working with RPF to quantify avoided emissions from reduced slash burning"
+      ],
+      "competitive_advantage": "+20% selection priority",
+      "scoring_weight": 5
+    },
+    {
+      "id": "project_duration",
+      "category": "project_specific",
+      "question": "Will this be a 1-year or 2-year project? What are your key milestones?",
+      "why": "SFI needs timeline - funds must be spent by March 31, 2027",
+      "required": true,
+      "help_text": "Maximum 2 years. Include major milestones",
+      "expected_length": "2-3 sentences",
+      "scoring_weight": 5
+    },
+    {
+      "id": "budget_justification",
+      "category": "project_specific",
+      "question": "Please provide a brief budget breakdown",
+      "why": "SFI requires budget with milestones. Admin max 10%, staff/travel <40%",
+      "required": true,
+      "help_text": "Implementation costs, staff time, training, community engagement",
+      "expected_length": "1 paragraph or simple breakdown",
+      "scoring_weight": 10
+    }
+  ],
+  
+  "checklist_items": {
+    "critical": [
+      {
+        "item": "Band Council Resolution",
+        "why": "Required for all First Nation applications",
+        "time_estimate": "2-4 weeks",
+        "template_available": true,
+        "priority": "HIGH"
+      },
+      {
+        "item": "Letter from Chief & Council",
+        "why": "SFI explicitly requires this",
+        "time_estimate": "1-2 weeks",
+        "template_available": true,
+        "priority": "HIGH"
+      },
+      {
+        "item": "Proof of forest management authority",
+        "why": "Must demonstrate decision-making responsibility",
+        "time_estimate": "1 day",
+        "where_to_find": "Community Forest Agreement or tenure documents",
+        "priority": "HIGH"
+      }
+    ],
+    "project_specific": [
+      {
+        "item": "Forest classification and age class data",
+        "why": "Required in application narrative",
+        "time_estimate": "1 week",
+        "how_to_get": "Contact RPF or use BC BEC maps",
+        "priority": "MEDIUM",
+        "conditional": {
+          "field": "project_types",
+          "operator": "contains",
+          "value": "forest"
+        }
+      },
+      {
+        "item": "Scalability analysis",
+        "why": "Your project is under 20,000ha - need to show broader applicability",
+        "time_estimate": "3-5 days",
+        "priority": "MEDIUM",
+        "conditional": {
+          "field": "project_size",
+          "operator": "<",
+          "value": 20000
+        }
+      },
+      {
+        "item": "Detailed budget with milestones",
+        "why": "SFI requires clear deliverables and costs",
+        "time_estimate": "1 week",
+        "template_available": true,
+        "priority": "HIGH"
+      }
+    ],
+    "strengthen": [
+      {
+        "item": "Carbon quantification methodology",
+        "why": "+20% competitive advantage",
+        "time_estimate": "2-3 weeks",
+        "optional": true,
+        "impact": "HIGH"
+      },
+      {
+        "item": "Photos of project site",
+        "why": "Visual evidence helps reviewers understand context",
+        "time_estimate": "1 day",
+        "optional": true,
+        "impact": "MEDIUM"
+      },
+      {
+        "item": "Partnership letters from forest companies",
+        "why": "+15% competitive advantage",
+        "time_estimate": "1-2 weeks",
+        "optional": true,
+        "impact": "HIGH"
+      },
+      {
+        "item": "Community engagement documentation",
+        "why": "Demonstrates community support and buy-in",
+        "time_estimate": "1 week",
+        "optional": true,
+        "impact": "MEDIUM"
+      }
+    ]
+  }
+}
