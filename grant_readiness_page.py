@@ -6,6 +6,7 @@ Shows template-based questions and smart checklist for a specific funding progra
 import streamlit as st
 from funding_templates.template_engine import TemplateManager
 from funding_templates.program_mapper import get_template_id
+from application_generator import generate_sfi_application
 
 
 def show_grant_readiness_page():
@@ -120,11 +121,12 @@ def show_grant_readiness_page():
     for q in strengthen_questions:
         show_question(q, template_id)
     
-    # Readiness Score
+    # Readiness Score & Actions
     st.markdown("---")
     score = template.calculate_readiness_score(st.session_state.readiness_responses)
     
-    col1, col2 = st.columns([2, 1])
+    col1, col2, col3 = st.columns([2, 1, 1])
+    
     with col1:
         st.metric("📊 Application Readiness", f"{score:.0f}%")
         
@@ -136,11 +138,34 @@ def show_grant_readiness_page():
             st.success("✅ You're ready to apply!")
     
     with col2:
-        if st.button("📋 View Checklist", type="primary"):
-            st.session_state.show_checklist = True
+        if st.button("📋 View Checklist"):
+            st.session_state.show_checklist = not st.session_state.get('show_checklist', False)
             st.rerun()
     
-    # Show checklist if requested
+    with col3:
+        # Generate Application Example button
+        if st.button("📄 Generate Example", type="primary"):
+            if score >= 50:
+                application_text = generate_sfi_application(
+                    user_intake,
+                    st.session_state.readiness_responses,
+                    program
+                )
+                
+                # Offer download
+                st.download_button(
+                    label="💾 Download Application Example",
+                    data=application_text,
+                    file_name=f"SFI_Application_Example_{user_intake.get('organization', 'Project').replace(' ', '_')}.txt",
+                    mime="text/plain"
+                )
+                
+                st.success("✅ Application example generated! Click above to download.")
+                st.info("📝 **This is a template** - review and customize before submitting to SFI.")
+            else:
+                st.warning("⚠️ Please answer more questions (need 50%+ readiness) to generate a meaningful application example.")
+    
+    # Show checklist if toggled
     if st.session_state.get('show_checklist'):
         show_checklist_section(template, user_intake)
     
@@ -153,7 +178,7 @@ def show_grant_readiness_page():
             st.rerun()
     with col2:
         if st.button("💾 Save Progress"):
-            st.success("Progress saved! (Feature coming soon)")
+            st.success("Progress saved in your browser session!")
 
 
 def show_question(q: dict, template_id: str):
@@ -190,7 +215,7 @@ def show_question(q: dict, template_id: str):
                 key=response_key,
                 height=150,
                 help=q.get('expected_length', ''),
-                placeholder="Example:\n• Sarah Johnson, RPF - Lands Manager, 15 years experience...\n• Elder Tom George - Cultural advisor..."
+                placeholder="Example:\\n• Sarah Johnson, RPF - Lands Manager, 15 years experience...\\n• Elder Tom George - Cultural advisor..."
             )
         else:
             response = st.text_area(
