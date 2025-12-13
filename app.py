@@ -183,6 +183,7 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
         row.get("Themes")
         or row.get("Focus_Themes")
         or row.get("Focus_Area_Themes")
+        or row.get("Eligible_Themes")  # Add this!
     )
     program_themes_norm = {s.lower() for s in program_themes}
     proj_themes_norm = {t.lower() for t in themes} if themes else set()
@@ -256,7 +257,7 @@ st.markdown(
     .block-container { padding: 2rem 2.5rem 3rem; border-radius: 18px; background: rgba(15, 23, 42, 0.75); }
     textarea, input, select, .stTextInput > div > div > input, .stTextArea textarea, .stMultiSelect div[data-baseweb="input"] {
         border-radius: 12px !important;
-        border-radius: 1px solid #1f2937 !important;
+        border: 1px solid #1f2937 !important;
         background-color: #0b1221 !important;
         color: #e2e8f0 !important;
         transition: border-color 0.2s ease;
@@ -383,8 +384,40 @@ with st.sidebar:
         3. Your project is **saved to Airtable**  
         4. You'll see funding programs **ranked by match score**
         5. Click **Deep Dive** for AI analysis OR **Grant Readiness** for application questions
+        
+        **OR** use "Test with SFI" button to quickly test Grant Readiness feature!
         """
     )
+    
+    # Quick test button
+    st.markdown("---")
+    st.subheader("🧪 Quick Test")
+    if st.button("Test with SFI Program", type="primary"):
+        # Load SFI program
+        df = load_funding_programs()
+        sfi_program = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
+        
+        if not sfi_program.empty:
+            # Set test data
+            st.session_state['user_intake'] = {
+                "organization": "Test First Nation",
+                "name": "Test User",
+                "email": "test@example.com",
+                "applicant_type": "First Nation",
+                "region": "Barkley Sound",
+                "budget_range": "$250k–1M",
+                "project_types": ["Forest restoration"],
+                "themes": ["Climate adaptation"],
+                "stage": "Planning",
+                "project_title": "Cedar Enhancement Project",
+                "description": "Restore cedar stands using retention harvest",
+                "project_size": 500,
+            }
+            st.session_state['selected_program'] = sfi_program.iloc[0].to_dict()
+            st.session_state.page = 'grant_readiness'
+            st.rerun()
+        else:
+            st.error("SFI program not found in database")
 
 st.markdown(
     """
@@ -394,7 +427,7 @@ st.markdown(
         <p class="muted">Tell us about your project and get a short list of programs, instantly scored against PRD-aligned criteria.</p>
         <div class="pill" style="margin-top: 8px;">
             <span class="dot"></span>
-            Save to Airtable automatically &middot; AI deep dive OR grant readiness
+            Save to Airtable automatically · AI deep dive OR grant readiness
         </div>
     </div>
     """,
@@ -480,6 +513,7 @@ with col2:
             "Road deactivation / upgrades",
             "Riparian planting",
             "Instream LWD / channel work",
+            "Forest restoration",  # Added for forestry
             "Planning / assessment",
             "Monitoring",
             "Community engagement / education",
@@ -532,7 +566,7 @@ if st.button("🔍 Find funding matches"):
         "partners": partners,
     }
 
-    # 1) Save project submission (set Deep Dive Status = pending explicitly)
+    # 1) Save project submission
     fields = {
         "Name": name,
         "Email": email,
@@ -550,13 +584,13 @@ if st.button("🔍 Find funding matches"):
     else:
         st.warning("⚠️ Could not save to Airtable. Matches shown anyway.")
 
-    # 2) Load funding programs from Airtable
+    # 2) Load funding programs
     df = load_funding_programs()
     if df.empty:
         st.warning("No funding programs found in Airtable.")
         st.stop()
 
-    # 3) Compute PRD-aligned scores (0–100)
+    # 3) Compute scores
     df["RawScore"] = df.apply(
         lambda row: raw_score_program(
             row,
@@ -570,28 +604,26 @@ if st.button("🔍 Find funding matches"):
         axis=1,
     )
 
-    # No normalization: RawScore is already 0–100
     df["Score"] = df["RawScore"].round().astype(int)
 
-    # 4) Sort ALL programs by score (desc) and name (asc) as tie-breaker
+    # 4) Sort
     df = df.sort_values(
         by=["Score", "Program_Name"],
         ascending=[False, True],
-        kind="mergesort",  # stable sort
+        kind="mergesort",
     )
 
-    # 5) Take the top program and write it back to the submission
+    # 5) Update top program
     if not df.empty and submission_id:
         top_program = df.iloc[0]
-        top_program_id = top_program["id"]  # Airtable record ID for program
+        top_program_id = top_program["id"]
 
         update_fields = {
             "Top Program ID": top_program_id,
-            # keep Deep Dive Status as 'pending' so your Make.com watcher can fire
         }
         update_project_submission(submission_id, update_fields)
 
-    # Store matches in session for navigation
+    # Store matches
     st.session_state['matches'] = df
 
     # 6) Display results
@@ -614,7 +646,6 @@ if st.button("🔍 Find funding matches"):
                 row.get("Program_Name") or row.get("Program") or "Unnamed program"
             )
 
-            # Alternate between regular and alt card styles
             card_class = "program-card" if idx % 2 == 0 else "program-card program-card-alt"
             st.markdown(f"<div class='{card_class}'>", unsafe_allow_html=True)
             st.markdown(
@@ -633,30 +664,10 @@ if st.button("🔍 Find funding matches"):
                 unsafe_allow_html=True,
             )
 
-            min_grant = (
-                row.get("Min_Grant_Amount")
-                or row.get("Minimum_Grant")
-                or row.get("Min_Amount")
-                or "—"
-            )
-            max_grant = (
-                row.get("Max_Grant_Amount")
-                or row.get("Max_Amount")
-                or row.get("Maximum_Grant")
-                or "—"
-            )
-            deadline = (
-                row.get("Application_Deadline")
-                or row.get("Next_Deadline")
-                or row.get("Deadline")
-                or "—"
-            )
-            competitiveness = (
-                row.get("Competitiveness_Level")
-                or row.get("Competitive_Level")
-                or row.get("Competition_Level")
-                or "—"
-            )
+            min_grant = row.get("Min_Grant_Amount") or "—"
+            max_grant = row.get("Max_Grant_Amount") or "—"
+            deadline = row.get("Application_Deadline") or "—"
+            competitiveness = row.get("Competitiveness_Level") or "—"
 
             st.markdown(
                 f"""
@@ -682,62 +693,25 @@ if st.button("🔍 Find funding matches"):
                 unsafe_allow_html=True,
             )
 
-            description_field = (
-                row.get("Program_Description") or row.get("Description")
-            )
+            description_field = row.get("Program_Description") or row.get("Description")
             if description_field:
                 st.markdown("<div class='info-box'>", unsafe_allow_html=True)
                 st.markdown("**Program description**")
                 st.write(description_field)
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            reporting = (
-                row.get("Reporting_Requirements")
-                or row.get("Reporting")
-                or row.get("Reporting_Notes")
-            )
-            if reporting:
-                st.markdown("<div class='info-box'>", unsafe_allow_html=True)
-                st.markdown("**Reporting requirements**")
-                st.write(reporting)
-                st.markdown("</div>", unsafe_allow_html=True)
-
-            portal = (
-                row.get("Application_Portal")
-                or row.get("Portal_URL")
-                or row.get("Website")
-                or ""
-            )
-            contact_email = (
-                row.get("Contact_Email")
-                or row.get("Funder_Contact_Email")
-                or row.get("Email")
-                or ""
-            )
-
-            link_bits = []
-            if portal:
-                link_bits.append(f"[Application portal]({portal})")
-            if contact_email:
-                link_bits.append(f"Contact: `{contact_email}`")
-
-            if link_bits:
-                st.markdown("**How to apply**")
-                st.write(" • ".join(link_bits))
-
             # Action buttons
             st.markdown("---")
             col1, col2 = st.columns(2)
             
             with col1:
-                # Deep Dive button (existing functionality)
+                # Deep Dive button
                 if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}"):
                     st.session_state['selected_program'] = row.to_dict()
-                    # Your existing Make.com trigger logic would go here
-                    st.info("🤖 Deep Dive AI report generation triggered! (Your Make.com automation)")
+                    st.info("🤖 Deep Dive AI report generation triggered!")
             
             with col2:
-                # Grant Readiness button (new functionality)
+                # Grant Readiness button - ALWAYS SHOW, enabled/disabled based on template
                 template_exists = has_template(program_name)
                 
                 if template_exists:
@@ -747,10 +721,10 @@ if st.button("🔍 Find funding matches"):
                         st.rerun()
                 else:
                     st.button(
-                        f"📋 Grant Readiness (Coming Soon)",
+                        f"📋 Grant Readiness",
                         key=f"readiness_{idx}",
                         disabled=True,
-                        help="Template not yet available for this program"
+                        help="Template coming soon for this program"
                     )
 
             st.markdown("</div>", unsafe_allow_html=True)
