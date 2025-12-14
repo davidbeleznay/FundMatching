@@ -31,11 +31,23 @@ def create_project_submission(fields: dict) -> str | None:
     table_name_encoded = urllib.parse.quote(PROJECTS_TABLE, safe="")
     url = f"{AIRTABLE_API_BASE}/{table_name_encoded}"
 
-    resp = requests.post(url, headers=AIRTABLE_HEADERS, json={"fields": fields})
+    # Clean fields to handle Airtable field type issues
+    clean_fields = {}
+    for key, value in fields.items():
+        # Convert lists to comma-separated strings for text fields
+        if isinstance(value, list):
+            clean_fields[key] = ", ".join(str(v) for v in value)
+        else:
+            clean_fields[key] = value
+    
+    resp = requests.post(url, headers=AIRTABLE_HEADERS, json={"fields": clean_fields})
     if resp.status_code == 200:
         return resp.json().get("id")
     else:
-        st.error(f"Error saving project to Airtable: {resp.status_code} – {resp.text}")
+        # Show error but don't stop the flow
+        st.warning(f"⚠️ Could not save to Airtable (will still show matches)")
+        with st.expander("See error details"):
+            st.code(f"Status: {resp.status_code}\\nError: {resp.text}")
         return None
 
 
@@ -140,7 +152,6 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
 
     if region_norm:
         if not elig_regions:
-            # no region data on program – neutral-ish
             score_region = 15
         else:
             if any(
@@ -151,7 +162,6 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
             else:
                 score_region = 0
     else:
-        # project region unknown – small neutral value
         score_region = 10
 
     # ---- Applicant (0–30) -------------------------------------------
@@ -176,14 +186,14 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
             frac = len(overlap) / len(proj_types_norm)
             score_type = int(20 * min(1.0, frac))
     elif not elig_types_norm:
-        score_type = 10  # program doesn't specify – mild neutral
+        score_type = 10
 
     # ---- Themes (0–10) ----------------------------------------------
     program_themes = as_list(
         row.get("Themes")
         or row.get("Focus_Themes")
         or row.get("Focus_Area_Themes")
-        or row.get("Eligible_Themes")  # Add this!
+        or row.get("Eligible_Themes")
     )
     program_themes_norm = {s.lower() for s in program_themes}
     proj_themes_norm = {t.lower() for t in themes} if themes else set()
@@ -194,7 +204,7 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
             frac = len(overlap) / len(proj_themes_norm)
             score_themes = int(10 * min(1.0, frac))
     elif not program_themes_norm:
-        score_themes = 5  # no theme info – neutral
+        score_themes = 5
 
     # ---- Budget (0–10) ----------------------------------------------
     proj_budget = estimate_project_budget(budget_range)
@@ -224,7 +234,7 @@ def raw_score_program(row, applicant_type, project_types, themes, budget_range, 
             stage_bonus = 5
 
     total = score_region + score_applicant + score_type + score_themes + score_budget + stage_bonus
-    total = min(total, 100)  # clamp to 100
+    total = min(total, 100)
     return float(total)
 
 
@@ -374,31 +384,25 @@ st.markdown(
 )
 
 with st.sidebar:
-    st.header("ℹ️ About this prototype")
+    st.header("ℹ️ About")
     st.markdown(
         """
-        This is an early **EcoProject Navigator / Funding Matcher** demo.
-
-        1. Tell us **who you are** and **what the project is**  
-        2. Click **Find funding matches**  
-        3. Your project is **saved to Airtable**  
-        4. You'll see funding programs **ranked by match score**
-        5. Click **Deep Dive** for AI analysis OR **Grant Readiness** for application questions
+        **EcoProject Navigator** - Funding Matcher
         
-        **OR** use "Test with SFI" button to quickly test Grant Readiness feature!
+        Features:
+        - Match to 48+ funding programs
+        - AI Deep Dive (strategic analysis)
+        - Grant Readiness (application prep)
+        
+        Quick test:
         """
     )
     
-    # Quick test button
-    st.markdown("---")
-    st.subheader("🧪 Quick Test")
-    if st.button("Test with SFI Program", type="primary"):
-        # Load SFI program
+    # Quick test buttons for both SFI and HCTF
+    if st.button("🧪 Test SFI", use_container_width=True):
         df = load_funding_programs()
-        sfi_program = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
-        
-        if not sfi_program.empty:
-            # Set test data
+        sfi = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
+        if not sfi.empty:
             st.session_state['user_intake'] = {
                 "organization": "Test First Nation",
                 "name": "Test User",
@@ -409,25 +413,45 @@ with st.sidebar:
                 "project_types": ["Forest restoration"],
                 "themes": ["Climate adaptation"],
                 "stage": "Planning",
-                "project_title": "Cedar Enhancement Project",
-                "description": "Restore cedar stands using retention harvest",
+                "project_title": "Cedar Enhancement",
+                "description": "Restore cedar stands",
                 "project_size": 500,
             }
-            st.session_state['selected_program'] = sfi_program.iloc[0].to_dict()
+            st.session_state['selected_program'] = sfi.iloc[0].to_dict()
             st.session_state.page = 'grant_readiness'
             st.rerun()
-        else:
-            st.error("SFI program not found in database")
+    
+    if st.button("🧪 Test HCTF", use_container_width=True):
+        df = load_funding_programs()
+        hctf = df[df['Program_Name'].str.contains('Habitat Conservation|HCTF', case=False, na=False)]
+        if not hctf.empty:
+            st.session_state['user_intake'] = {
+                "organization": "Test Conservation Group",
+                "name": "Test User",
+                "email": "test@example.com",
+                "applicant_type": "Non-profit / Charity",
+                "region": "Vancouver Island",
+                "budget_range": "$50–250k",
+                "project_types": ["Riparian planting", "Monitoring"],
+                "themes": ["Salmon habitat", "Biodiversity"],
+                "stage": "Ready to implement",
+                "project_title": "Salmon Habitat Restoration",
+                "description": "Restore riparian buffers for salmon",
+                "project_size": 25,
+            }
+            st.session_state['selected_program'] = hctf.iloc[0].to_dict()
+            st.session_state.page = 'grant_readiness'
+            st.rerun()
 
 st.markdown(
     """
     <div class="hero">
         <p class="eyebrow">Funding matcher MVP</p>
         <h1>EcoProject Navigator</h1>
-        <p class="muted">Tell us about your project and get a short list of programs, instantly scored against PRD-aligned criteria.</p>
+        <p class="muted">Match your project to funding programs with AI-powered insights and application support.</p>
         <div class="pill" style="margin-top: 8px;">
             <span class="dot"></span>
-            Save to Airtable automatically · AI deep dive OR grant readiness
+            48+ programs · Deep Dive · Grant Readiness
         </div>
     </div>
     """,
@@ -441,7 +465,7 @@ st.markdown(
         <div class="section-number">1</div>
         <div>
             <h3>Who are you?</h3>
-            <p class="section-sub">This helps align eligibility with the right programs.</p>
+            <p class="section-sub">Applicant type affects eligibility.</p>
         </div>
     </div>
     <div class="input-section">
@@ -467,10 +491,6 @@ applicant_type = st.selectbox(
 )
 
 partners = st.text_input("Key partners (optional)")
-match_funding = st.selectbox(
-    "Do you have match funding available?",
-    ["Unsure", "Yes", "No"],
-)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -480,7 +500,7 @@ st.markdown(
         <div class="section-number">2</div>
         <div>
             <h3>Project basics</h3>
-            <p class="section-sub">Scope, location, and focus areas help us rank the matches.</p>
+            <p class="section-sub">Location, scope, and focus.</p>
         </div>
     </div>
     <div class="input-section">
@@ -490,19 +510,14 @@ st.markdown(
 col1, col2 = st.columns(2)
 
 with col1:
-    region = st.text_input("Region / Watershed (e.g., 'Cowichan', 'Koksilah')")
+    region = st.text_input("Region / Watershed")
     budget_range = st.selectbox(
-        "Approximate budget range",
+        "Budget range",
         ["<$50k", "$50–250k", "$250k–1M", ">1M"],
     )
     stage = st.selectbox(
         "Project stage",
-        [
-            "Idea",
-            "Planning",
-            "Ready to implement",
-            "Shovel-ready",
-        ],
+        ["Idea", "Planning", "Ready to implement", "Shovel-ready"],
     )
 
 with col2:
@@ -513,7 +528,7 @@ with col2:
             "Road deactivation / upgrades",
             "Riparian planting",
             "Instream LWD / channel work",
-            "Forest restoration",  # Added for forestry
+            "Forest restoration",
             "Planning / assessment",
             "Monitoring",
             "Community engagement / education",
@@ -521,7 +536,7 @@ with col2:
         ],
     )
     themes = st.multiselect(
-        "Theme(s) / focus areas",
+        "Theme(s)",
         [
             "Climate adaptation",
             "Salmon habitat",
@@ -539,18 +554,16 @@ with col2:
     )
 
 project_title = st.text_input("Project title")
-description = st.text_area("Short project description", height=120)
+description = st.text_area("Project description", height=120)
 
 st.markdown("</div>", unsafe_allow_html=True)
-
 st.markdown("---")
 
 # ---------------------------------------------------------------------
-# MAIN BUTTON + MATCHING LOGIC
+# MAIN BUTTON
 # ---------------------------------------------------------------------
-if st.button("🔍 Find funding matches"):
+if st.button("🔍 Find funding matches", type="primary"):
 
-    # Store user intake in session state for template system
     st.session_state['user_intake'] = {
         "organization": org_name,
         "name": name,
@@ -566,7 +579,7 @@ if st.button("🔍 Find funding matches"):
         "partners": partners,
     }
 
-    # 1) Save project submission
+    # Save to Airtable (non-blocking if fails)
     fields = {
         "Name": name,
         "Email": email,
@@ -579,61 +592,39 @@ if st.button("🔍 Find funding matches"):
     }
 
     submission_id = create_project_submission(fields)
-    if submission_id:
-        st.success("✅ Your project was saved to Airtable.")
-    else:
-        st.warning("⚠️ Could not save to Airtable. Matches shown anyway.")
 
-    # 2) Load funding programs
+    # Load programs
     df = load_funding_programs()
     if df.empty:
-        st.warning("No funding programs found in Airtable.")
+        st.warning("No programs found")
         st.stop()
 
-    # 3) Compute scores
+    # Score
     df["RawScore"] = df.apply(
         lambda row: raw_score_program(
-            row,
-            applicant_type=applicant_type,
-            project_types=project_types,
-            themes=themes,
-            budget_range=budget_range,
-            region=region,
-            stage=stage,
+            row, applicant_type, project_types, themes, budget_range, region, stage
         ),
         axis=1,
     )
-
     df["Score"] = df["RawScore"].round().astype(int)
 
-    # 4) Sort
-    df = df.sort_values(
-        by=["Score", "Program_Name"],
-        ascending=[False, True],
-        kind="mergesort",
-    )
+    # Sort
+    df = df.sort_values(by=["Score", "Program_Name"], ascending=[False, True], kind="mergesort")
 
-    # 5) Update top program
+    # Update top program
     if not df.empty and submission_id:
-        top_program = df.iloc[0]
-        top_program_id = top_program["id"]
+        update_project_submission(submission_id, {"Top Program ID": df.iloc[0]["id"]})
 
-        update_fields = {
-            "Top Program ID": top_program_id,
-        }
-        update_project_submission(submission_id, update_fields)
-
-    # Store matches
     st.session_state['matches'] = df
 
-    # 6) Display results
+    # Display
     st.markdown(
         """
         <div class="section-header">
             <div class="section-number">3</div>
             <div>
-                <h3>Suggested funding programs</h3>
-                <p class="section-sub">Loaded directly from your Airtable base and scored against your project details.</p>
+                <h3>Your funding matches</h3>
+                <p class="section-sub">Ranked by match score</p>
             </div>
         </div>
         """,
@@ -641,90 +632,67 @@ if st.button("🔍 Find funding matches"):
     )
 
     for idx, row in df.iterrows():
-        with st.container():
-            program_name = (
-                row.get("Program_Name") or row.get("Program") or "Unnamed program"
-            )
-
-            card_class = "program-card" if idx % 2 == 0 else "program-card program-card-alt"
-            st.markdown(f"<div class='{card_class}'>", unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div class="program-top">
-                    <div>
-                        <p class="eyebrow">Funding opportunity</p>
-                        <h3>🌊 {program_name}</h3>
-                    </div>
-                    <div class="score-badge">
-                        <span>{int(row['Score'])}</span>
-                        <small>match</small>
-                    </div>
+        program_name = row.get("Program_Name", "Unknown")
+        card_class = "program-card" if idx % 2 == 0 else "program-card program-card-alt"
+        
+        st.markdown(f"<div class='{card_class}'>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="program-top">
+                <div>
+                    <p class="eyebrow">Funding opportunity</p>
+                    <h3>🌊 {program_name}</h3>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            min_grant = row.get("Min_Grant_Amount") or "—"
-            max_grant = row.get("Max_Grant_Amount") or "—"
-            deadline = row.get("Application_Deadline") or "—"
-            competitiveness = row.get("Competitiveness_Level") or "—"
-
-            st.markdown(
-                f"""
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <p class="metric-label">Minimum grant</p>
-                        <p class="metric-value">{min_grant}</p>
-                    </div>
-                    <div class="metric-card">
-                        <p class="metric-label">Maximum grant</p>
-                        <p class="metric-value">{max_grant}</p>
-                    </div>
-                    <div class="metric-card">
-                        <p class="metric-label">Application deadline</p>
-                        <p class="metric-value">{deadline}</p>
-                    </div>
-                    <div class="metric-card">
-                        <p class="metric-label">Competitiveness</p>
-                        <p class="metric-value">{competitiveness}</p>
-                    </div>
+                <div class="score-badge">
+                    <span>{int(row['Score'])}</span>
+                    <small>match</small>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-            description_field = row.get("Program_Description") or row.get("Description")
-            if description_field:
-                st.markdown("<div class='info-box'>", unsafe_allow_html=True)
-                st.markdown("**Program description**")
-                st.write(description_field)
-                st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Max grant</p>
+                    <p class="metric-value">{row.get('Max_Grant_Amount', '—')}</p>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Deadline</p>
+                    <p class="metric-value">{row.get('Application_Deadline', '—')}</p>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Competition</p>
+                    <p class="metric-value">{row.get('Competitiveness_Level', '—')}</p>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-            # Action buttons
-            st.markdown("---")
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                # Deep Dive button
-                if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}"):
-                    st.session_state['selected_program'] = row.to_dict()
-                    st.info("🤖 Deep Dive AI report generation triggered!")
-            
-            with col2:
-                # Grant Readiness button - ALWAYS SHOW, enabled/disabled based on template
-                template_exists = has_template(program_name)
-                
-                if template_exists:
-                    if st.button(f"📋 Grant Readiness", key=f"readiness_{idx}", type="primary"):
-                        st.session_state['selected_program'] = row.to_dict()
-                        st.session_state.page = 'grant_readiness'
-                        st.rerun()
-                else:
-                    st.button(
-                        f"📋 Grant Readiness",
-                        key=f"readiness_{idx}",
-                        disabled=True,
-                        help="Template coming soon for this program"
-                    )
-
+        if row.get("Program_Description"):
+            st.markdown("<div class='info-box'>", unsafe_allow_html=True)
+            st.write(row["Program_Description"])
             st.markdown("</div>", unsafe_allow_html=True)
+
+        # Buttons
+        st.markdown("---")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("🔍 Deep Dive", key=f"dd_{idx}"):
+                st.session_state['selected_program'] = row.to_dict()
+                st.info("🤖 Deep Dive triggered!")
+        
+        with col2:
+            if has_template(program_name):
+                if st.button("📋 Grant Readiness", key=f"gr_{idx}", type="primary"):
+                    st.session_state['selected_program'] = row.to_dict()
+                    st.session_state.page = 'grant_readiness'
+                    st.rerun()
+            else:
+                st.button("📋 Grant Readiness", key=f"gr_{idx}", disabled=True, help="Coming soon")
+
+        st.markdown("</div>", unsafe_allow_html=True)
