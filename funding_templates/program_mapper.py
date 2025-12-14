@@ -8,10 +8,14 @@ PROGRAM_TEMPLATE_MAP = {
     "SFI Climate Smart Forestry - Indigenous-Led (ECCC Grant)": "sfi-climate-smart-forestry",
     "SFI Indigenous-Led Climate Smart Forestry - Round 2": "sfi-climate-smart-forestry",
     
+    # HCTF Programs
+    "Habitat Conservation Trust Foundation": "hctf-fish-wildlife",
+    "HCTF": "hctf-fish-wildlife",
+    "HCTF Fish & Wildlife Grants": "hctf-fish-wildlife",
+    
     # Add more as you build templates:
     # "BC Salmon Restoration & Innovation Fund": "bcsrif",
     # "FWCP Watershed": "fwcp",
-    # "Habitat Conservation Trust Foundation": "hctf",
     # "ECCC Nature Smart Climate Solutions": "eccc-nature-smart",
 }
 
