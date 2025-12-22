@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 from funding_templates.program_mapper import has_template
 from grant_readiness_page import show_grant_readiness_page
 
+# VERSION TRACKING
+APP_VERSION = "v2.1.0"
+LAST_UPDATED = "Dec 22, 2025 - 7:45 AM PST"
+
 # ---------------------------------------------------------------------
 # Airtable config
 # ---------------------------------------------------------------------
@@ -229,32 +233,31 @@ st.markdown(
     """
     <style>
     :root {
-        --bg-dark: #0b1221;
-        --card: #0f172a;
-        --card-alt: #1a2332;
-        --muted: #9fb3c8;
-        --accent: #22d3ee;
-        --primary: #0f766e;
+        --bg-dark: #0f172a;
+        --card: #1e293b;
+        --card-alt: #334155;
+        --muted: #94a3b8;
+        --accent: #14b8a6;
+        --primary: #0d9488;
     }
 
     .stApp { 
-        background: radial-gradient(circle at 10% 20%, #132035 0, #0b1221 25%),
-                   radial-gradient(circle at 80% 0%, rgba(34, 211, 238, 0.12), transparent 30%);
-        color: #e2e8f0; 
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #f1f5f9; 
     }
     section.main > div { padding-top: 1rem; }
-    .block-container { padding: 2rem 2.5rem 3rem; border-radius: 18px; background: rgba(15, 23, 42, 0.75); }
+    .block-container { padding: 2rem 2.5rem 3rem; border-radius: 18px; background: rgba(30, 41, 59, 0.4); }
     
     textarea, input, select, .stTextInput > div > div > input, .stTextArea textarea, .stMultiSelect div[data-baseweb="input"] {
         border-radius: 12px !important;
-        border: 1px solid #1f2937 !important;
-        background-color: #0b1221 !important;
-        color: #e2e8f0 !important;
+        border: 1px solid #334155 !important;
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
         transition: border-color 0.2s ease;
     }
     textarea:focus, input:focus, select:focus, .stTextInput > div > div > input:focus {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.1) !important;
+        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2) !important;
     }
     
     .stSelectbox [data-baseweb="select"] > div { border-radius: 12px !important; }
@@ -263,43 +266,43 @@ st.markdown(
     button[kind="primary"], .stButton button {
         border-radius: 12px;
         font-weight: 700;
-        background: linear-gradient(120deg, #0f766e, #22d3ee) !important;
+        background: linear-gradient(120deg, #0d9488, #14b8a6) !important;
         border: none !important;
         padding: 0.75rem 2rem !important;
         font-size: 1rem !important;
-        box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+        box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     button[kind="primary"]:hover, .stButton button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(34, 211, 238, 0.4);
+        box-shadow: 0 6px 20px rgba(20, 184, 166, 0.6);
     }
     
     .hero {
-        background: linear-gradient(120deg, rgba(15, 118, 110, 0.22), rgba(34, 211, 238, 0.14));
-        border: 1px solid rgba(34, 211, 238, 0.25);
+        background: linear-gradient(120deg, rgba(13, 148, 136, 0.25), rgba(20, 184, 166, 0.15));
+        border: 1px solid rgba(20, 184, 166, 0.3);
         border-radius: 20px;
         padding: 18px 20px;
         margin-bottom: 1.2rem;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    .hero h1 { margin: 0; font-size: 1.8rem; }
+    .hero h1 { margin: 0; font-size: 1.8rem; color: #f1f5f9; }
     .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: var(--accent); margin-bottom: 0.35rem; }
-    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); color: #e2e8f0; font-size: 0.9rem; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.25); color: #f1f5f9; font-size: 0.9rem; }
     .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
     .input-section {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.15);
         border-radius: 16px;
         padding: 20px 24px;
         margin-bottom: 1.5rem;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
 
     .section-header { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0 1rem; }
-    .section-number { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: rgba(34, 211, 238, 0.16); color: #e2e8f0; font-weight: 700; }
-    .section-header h3 { margin: 0; }
+    .section-number { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: rgba(20, 184, 166, 0.2); color: #f1f5f9; font-weight: 700; }
+    .section-header h3 { margin: 0; color: #f1f5f9; }
     .section-sub { color: var(--muted); margin-top: 2px; margin-bottom: 0; }
 
     .program-card {
@@ -307,16 +310,17 @@ st.markdown(
         padding: 20px 22px 14px;
         margin-bottom: 1rem;
         background: var(--card);
-        border: 1px solid #1f2937;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        border: 1px solid #334155;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .program-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+        box-shadow: 0 12px 32px rgba(20, 184, 166, 0.15);
+        border-color: rgba(20, 184, 166, 0.3);
     }
     .program-card-alt { background: var(--card-alt); }
-    .program-card h3 { margin-bottom: 0.1rem; }
+    .program-card h3 { margin-bottom: 0.1rem; color: #f1f5f9; }
     .program-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
     
     .score-badge {
@@ -325,10 +329,10 @@ st.markdown(
         gap: 8px;
         padding: 12px 16px;
         border-radius: 14px;
-        background: linear-gradient(120deg, #0f766e, #22d3ee);
-        color: #0b1221;
+        background: linear-gradient(120deg, #0d9488, #14b8a6);
+        color: #0f172a;
         font-weight: 800;
-        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
     }
     .score-badge small { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; opacity: 0.9; }
 
@@ -339,22 +343,32 @@ st.markdown(
         margin: 1rem 0;
     }
     .metric-card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(51, 65, 85, 0.5);
+        border: 1px solid rgba(148, 163, 184, 0.15);
         padding: 12px 14px;
         border-radius: 12px;
         transition: background 0.2s ease;
     }
-    .metric-card:hover { background: rgba(255, 255, 255, 0.06); }
+    .metric-card:hover { background: rgba(51, 65, 85, 0.7); }
     .metric-label { color: var(--muted); font-size: 0.85rem; margin: 0; }
-    .metric-value { font-size: 1.05rem; margin: 0.15rem 0 0; font-weight: 600; }
+    .metric-value { font-size: 1.05rem; margin: 0.15rem 0 0; font-weight: 600; color: #f1f5f9; }
 
     .info-box {
-        background: rgba(15, 118, 110, 0.08);
-        border: 1px solid rgba(15, 118, 110, 0.2);
+        background: rgba(13, 148, 136, 0.1);
+        border: 1px solid rgba(20, 184, 166, 0.25);
         border-radius: 12px;
         padding: 12px 16px;
         margin: 0.75rem 0;
+    }
+
+    .version-badge {
+        background: rgba(20, 184, 166, 0.15);
+        border: 1px solid rgba(20, 184, 166, 0.3);
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 20px;
+        font-size: 0.75rem;
+        color: #94a3b8;
     }
 
     .muted { color: var(--muted); }
@@ -363,7 +377,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Sidebar
+# Sidebar with VERSION
 with st.sidebar:
     st.header("ℹ️ About")
     st.markdown(
@@ -377,52 +391,73 @@ with st.sidebar:
         """
     )
     
+    # VERSION DISPLAY
+    st.markdown(
+        f"""
+        <div class="version-badge">
+            <strong>Version:</strong> {APP_VERSION}<br>
+            <strong>Updated:</strong> {LAST_UPDATED}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
     st.markdown("---")
     st.subheader("🧪 Quick Tests")
     
     if st.button("Test SFI", use_container_width=True):
         df = load_funding_programs()
-        sfi = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
-        if not sfi.empty:
-            st.session_state['user_intake'] = {
-                "organization": "Test First Nation",
-                "name": "Test User",
-                "email": "test@example.com",
-                "applicant_type": "First Nation",
-                "region": "Barkley Sound",
-                "budget_range": "$250k–1M",
-                "project_types": ["Forest restoration"],
-                "themes": ["Climate adaptation"],
-                "stage": "Planning",
-                "project_title": "Cedar Enhancement",
-                "description": "Restore cedar stands",
-                "project_size": 500,
-            }
-            st.session_state['selected_program'] = sfi.iloc[0].to_dict()
-            st.session_state.page = 'grant_readiness'
-            st.rerun()
+        if df.empty:
+            st.error("Cannot load programs - check Airtable connection")
+        else:
+            sfi = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
+            if not sfi.empty:
+                st.session_state['user_intake'] = {
+                    "organization": "Test First Nation",
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "applicant_type": "First Nation",
+                    "region": "Barkley Sound",
+                    "budget_range": "$250k–1M",
+                    "project_types": ["Forest restoration"],
+                    "themes": ["Climate adaptation"],
+                    "stage": "Planning",
+                    "project_title": "Cedar Enhancement",
+                    "description": "Restore cedar stands",
+                    "project_size": 500,
+                }
+                st.session_state['selected_program'] = sfi.iloc[0].to_dict()
+                st.session_state.page = 'grant_readiness'
+                st.rerun()
+            else:
+                st.error("SFI program not found in database")
     
     if st.button("Test HCTF", use_container_width=True):
         df = load_funding_programs()
-        hctf = df[df['Program_Name'].str.contains('Habitat Conservation|HCTF', case=False, na=False)]
-        if not hctf.empty:
-            st.session_state['user_intake'] = {
-                "organization": "Test Conservation Group",
-                "name": "Test User",
-                "email": "test@example.com",
-                "applicant_type": "Non-profit / Charity",
-                "region": "Vancouver Island",
-                "budget_range": "$50–250k",
-                "project_types": ["Riparian planting"],
-                "themes": ["Salmon habitat"],
-                "stage": "Ready to implement",
-                "project_title": "Salmon Habitat Restoration",
-                "description": "Restore riparian buffers",
-                "project_size": 25,
-            }
-            st.session_state['selected_program'] = hctf.iloc[0].to_dict()
-            st.session_state.page = 'grant_readiness'
-            st.rerun()
+        if df.empty:
+            st.error("Cannot load programs - check Airtable connection")
+        else:
+            hctf = df[df['Program_Name'].str.contains('Habitat Conservation|HCTF', case=False, na=False)]
+            if not hctf.empty:
+                st.session_state['user_intake'] = {
+                    "organization": "Test Conservation Group",
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "applicant_type": "Non-profit / Charity",
+                    "region": "Vancouver Island",
+                    "budget_range": "$50–250k",
+                    "project_types": ["Riparian planting"],
+                    "themes": ["Salmon habitat"],
+                    "stage": "Ready to implement",
+                    "project_title": "Salmon Habitat Restoration",
+                    "description": "Restore riparian buffers",
+                    "project_size": 25,
+                }
+                st.session_state['selected_program'] = hctf.iloc[0].to_dict()
+                st.session_state.page = 'grant_readiness'
+                st.rerun()
+            else:
+                st.error("HCTF program not found in database")
 
 # Header
 st.markdown(
