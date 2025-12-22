@@ -3,14 +3,13 @@ import urllib.parse
 import requests
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 from dotenv import load_dotenv
 from funding_templates.program_mapper import has_template
 from grant_readiness_page import show_grant_readiness_page
 
 # VERSION TRACKING
-APP_VERSION = "v2.2.0"
-LAST_UPDATED = "Dec 22, 2025 - 8:20 AM PST - Deep Dive triggers Make.com"
+APP_VERSION = "v2.2.1"
+LAST_UPDATED = "Dec 22, 2025 - 8:45 AM PST - Deep Dive persists across reruns"
 
 # ---------------------------------------------------------------------
 # Airtable config
@@ -54,7 +53,7 @@ def create_project_submission(fields: dict) -> str | None:
         return None
 
 
-def update_project_submission(record_id: str, fields: dict) -> None:
+def update_project_submission(record_id: str, fields: dict) -> bool:
     """Update an existing project submission record in Airtable."""
     table_name_encoded = urllib.parse.quote(PROJECTS_TABLE, safe="")
     url = f"{AIRTABLE_API_BASE}/{table_name_encoded}/{record_id}"
@@ -66,8 +65,6 @@ def update_project_submission(record_id: str, fields: dict) -> None:
 
 def trigger_deep_dive(submission_id: str, program_id: str, program_name: str) -> bool:
     """Update Airtable record to trigger Make.com Deep Dive automation"""
-    timestamp = datetime.now().isoformat()
-    
     fields = {
         "Deep Dive": program_name,  # This will trigger Make.com watch
         "Deep Dive Status": "pending",
@@ -582,67 +579,7 @@ description = st.text_area("Description", height=120)
 st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("---")
 
-# FIND MATCHES BUTTON
-if st.button("🔍 Find funding matches", type="primary", use_container_width=True):
-
-    st.session_state['user_intake'] = {
-        "organization": org_name,
-        "name": name,
-        "email": email,
-        "applicant_type": applicant_type,
-        "region": region,
-        "budget_range": budget_range,
-        "project_types": project_types,
-        "themes": themes,
-        "stage": stage,
-        "project_title": project_title,
-        "description": description,
-        "partners": partners,
-    }
-
-    # Save to Airtable
-    fields = {
-        "Name": name,
-        "Email": email,
-        "Applicant Type": applicant_type,
-        "Region": region,
-        "Budget Range": budget_range,
-        "Project Types": ", ".join(project_types) if project_types else "",
-        "Project Title": project_title,
-        "Description": description,
-        "Stage": stage,
-        "Themes": ", ".join(themes) if themes else "",
-        "Partners": partners,
-    }
-
-    submission_id = create_project_submission(fields)
-    
-    # Store submission ID for Deep Dive later
-    if submission_id:
-        st.session_state['submission_id'] = submission_id
-
-    # Load programs
-    df = load_funding_programs()
-    if df.empty:
-        st.warning("No programs found")
-        st.stop()
-
-    # Score
-    df["RawScore"] = df.apply(
-        lambda row: raw_score_program(
-            row, applicant_type, project_types, themes, budget_range, region, stage
-        ),
-        axis=1,
-    )
-    df["Score"] = df["RawScore"].round().astype(int)
-    df = df.sort_values(by=["Score", "Program_Name"], ascending=[False, True], kind="mergesort")
-
-    if not df.empty and submission_id:
-        update_project_submission(submission_id, {"Top Program ID": df.iloc[0]["id"]})
-
-    st.session_state['matches'] = df
-
-    # Display
+def render_matches(df: pd.DataFrame) -> None:
     st.markdown(
         """
         <div class="section-header">
@@ -655,6 +592,8 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
         """,
         unsafe_allow_html=True,
     )
+
+    submission_id = st.session_state.get("submission_id")
 
     for idx, row in df.iterrows():
         program_name = row.get("Program_Name", "Unknown")
@@ -703,15 +642,12 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
             st.write(row["Program_Description"])
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # BUTTONS
         st.markdown("---")
         button_col1, button_col2 = st.columns(2)
         
         with button_col1:
-            # Deep Dive - NOW ACTUALLY SAVES TO AIRTABLE!
             if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}", use_container_width=True):
                 if submission_id:
-                    # Update Airtable to trigger Make.com
                     success = trigger_deep_dive(submission_id, row.get("id"), program_name)
                     
                     if success:
@@ -766,3 +702,63 @@ Includes:
         st.markdown("</div>", unsafe_allow_html=True)
         
     st.success(f"✅ Showing {len(df)} programs!")
+
+
+# FIND MATCHES BUTTON
+if st.button("🔍 Find funding matches", type="primary", use_container_width=True):
+
+    st.session_state['user_intake'] = {
+        "organization": org_name,
+        "name": name,
+        "email": email,
+        "applicant_type": applicant_type,
+        "region": region,
+        "budget_range": budget_range,
+        "project_types": project_types,
+        "themes": themes,
+        "stage": stage,
+        "project_title": project_title,
+        "description": description,
+        "partners": partners,
+    }
+
+    fields = {
+        "Name": name,
+        "Email": email,
+        "Applicant Type": applicant_type,
+        "Region": region,
+        "Budget Range": budget_range,
+        "Project Types": ", ".join(project_types) if project_types else "",
+        "Project Title": project_title,
+        "Description": description,
+        "Stage": stage,
+        "Themes": ", ".join(themes) if themes else "",
+        "Partners": partners,
+    }
+
+    submission_id = create_project_submission(fields)
+    if submission_id:
+        st.session_state['submission_id'] = submission_id
+
+    df = load_funding_programs()
+    if df.empty:
+        st.warning("No programs found")
+        st.stop()
+
+    df["RawScore"] = df.apply(
+        lambda row: raw_score_program(
+            row, applicant_type, project_types, themes, budget_range, region, stage
+        ),
+        axis=1,
+    )
+    df["Score"] = df["RawScore"].round().astype(int)
+    df = df.sort_values(by=["Score", "Program_Name"], ascending=[False, True], kind="mergesort")
+
+    if not df.empty and submission_id:
+        update_project_submission(submission_id, {"Top Program ID": df.iloc[0]["id"]})
+
+    st.session_state['matches'] = df
+
+matches = st.session_state.get("matches")
+if matches is not None and not matches.empty:
+    render_matches(matches)
