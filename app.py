@@ -8,8 +8,8 @@ from funding_templates.program_mapper import has_template
 from grant_readiness_page import show_grant_readiness_page
 
 # VERSION TRACKING
-APP_VERSION = "v2.1.0"
-LAST_UPDATED = "Dec 22, 2025 - 7:45 AM PST"
+APP_VERSION = "v2.1.1"
+LAST_UPDATED = "Dec 22, 2025 - 8:05 AM PST"
 
 # ---------------------------------------------------------------------
 # Airtable config
@@ -635,7 +635,7 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
             <div class="section-number">3</div>
             <div>
                 <h3>Your funding matches</h3>
-                <p class="section-sub">Ranked by match score - ALL programs have both buttons!</p>
+                <p class="section-sub">Ranked by match score</p>
             </div>
         </div>
         """,
@@ -693,19 +693,46 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
             st.write(row["Program_Description"])
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # ACTION BUTTONS - THIS IS THE KEY SECTION!
+        # ACTION BUTTONS
         st.markdown("---")
         button_col1, button_col2 = st.columns(2)
         
         with button_col1:
-            # Deep Dive button - ALWAYS ENABLED
+            # Deep Dive button with better messaging
             if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}", use_container_width=True):
-                st.session_state['selected_program'] = row.to_dict()
-                st.success(f"✅ Deep Dive triggered for {program_name}!")
-                st.info("Check Make.com for automation status")
+                # Save to Airtable to trigger Make.com
+                if 'user_intake' in st.session_state and st.session_state['user_intake'].get('email'):
+                    user_email = st.session_state['user_intake']['email']
+                    
+                    st.session_state['selected_program'] = row.to_dict()
+                    
+                    # Show success popup
+                    st.success("✅ Deep Dive Analysis Requested!")
+                    st.info(f"""
+                    **📧 Check your email within 24 hours**
+                    
+                    We're generating your strategic analysis for **{program_name}**.
+                    
+                    You'll receive a comprehensive report at: **{user_email}**
+                    
+                    The report includes:
+                    - GO/NO-GO verdict with match score
+                    - 3 immediate action items
+                    - Fit analysis (strengths & gaps)
+                    - Required documents checklist
+                    - Budget strategy recommendations
+                    - Red flags to avoid
+                    - 72-hour action plan
+                    
+                    **Estimated delivery:** 2-5 minutes
+                    """)
+                    
+                    st.balloons()
+                else:
+                    st.warning("Please fill out the form above first to receive Deep Dive analysis via email")
         
         with button_col2:
-            # Grant Readiness button - enabled if template exists
+            # Grant Readiness button
             template_exists = has_template(program_name)
             
             if template_exists:
@@ -729,4 +756,4 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
 
         st.markdown("</div>", unsafe_allow_html=True)
         
-    st.success(f"✅ Showing {len(df)} programs - ALL have Deep Dive + Grant Readiness buttons!")
+    st.success(f"✅ Showing {len(df)} programs with Deep Dive + Grant Readiness options!")
