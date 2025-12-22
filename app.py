@@ -3,13 +3,14 @@ import urllib.parse
 import requests
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from dotenv import load_dotenv
 from funding_templates.program_mapper import has_template
 from grant_readiness_page import show_grant_readiness_page
 
 # VERSION TRACKING
-APP_VERSION = "v2.1.1"
-LAST_UPDATED = "Dec 22, 2025 - 8:05 AM PST"
+APP_VERSION = "v2.2.0"
+LAST_UPDATED = "Dec 22, 2025 - 8:20 AM PST - Deep Dive triggers Make.com"
 
 # ---------------------------------------------------------------------
 # Airtable config
@@ -35,7 +36,7 @@ def create_project_submission(fields: dict) -> str | None:
     table_name_encoded = urllib.parse.quote(PROJECTS_TABLE, safe="")
     url = f"{AIRTABLE_API_BASE}/{table_name_encoded}"
 
-    # Clean fields to handle Airtable field type issues
+    # Clean fields
     clean_fields = {}
     for key, value in fields.items():
         if isinstance(value, list):
@@ -60,6 +61,20 @@ def update_project_submission(record_id: str, fields: dict) -> None:
     resp = requests.patch(url, headers=AIRTABLE_HEADERS, json={"fields": fields})
     if resp.status_code != 200:
         st.error(f"Error updating project: {resp.status_code} – {resp.text}")
+    return resp.status_code == 200
+
+
+def trigger_deep_dive(submission_id: str, program_id: str, program_name: str) -> bool:
+    """Update Airtable record to trigger Make.com Deep Dive automation"""
+    timestamp = datetime.now().isoformat()
+    
+    fields = {
+        "Deep Dive": program_name,  # This will trigger Make.com watch
+        "Deep Dive Status": "pending",
+        "Top Program ID": program_id,
+    }
+    
+    return update_project_submission(submission_id, fields)
 
 
 def load_funding_programs() -> pd.DataFrame:
@@ -408,7 +423,7 @@ with st.sidebar:
     if st.button("Test SFI", use_container_width=True):
         df = load_funding_programs()
         if df.empty:
-            st.error("Cannot load programs - check Airtable connection")
+            st.error("Cannot load programs")
         else:
             sfi = df[df['Program_Name'].str.contains('SFI', case=False, na=False)]
             if not sfi.empty:
@@ -429,13 +444,11 @@ with st.sidebar:
                 st.session_state['selected_program'] = sfi.iloc[0].to_dict()
                 st.session_state.page = 'grant_readiness'
                 st.rerun()
-            else:
-                st.error("SFI program not found in database")
     
     if st.button("Test HCTF", use_container_width=True):
         df = load_funding_programs()
         if df.empty:
-            st.error("Cannot load programs - check Airtable connection")
+            st.error("Cannot load programs")
         else:
             hctf = df[df['Program_Name'].str.contains('Habitat Conservation|HCTF', case=False, na=False)]
             if not hctf.empty:
@@ -456,8 +469,6 @@ with st.sidebar:
                 st.session_state['selected_program'] = hctf.iloc[0].to_dict()
                 st.session_state.page = 'grant_readiness'
                 st.rerun()
-            else:
-                st.error("HCTF program not found in database")
 
 # Header
 st.markdown(
@@ -510,7 +521,7 @@ applicant_type = st.selectbox(
 partners = st.text_input("Partners (optional)")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Section 2: Project basics
+# Section 2
 st.markdown(
     """
     <div class="section-header">
@@ -574,7 +585,6 @@ st.markdown("---")
 # FIND MATCHES BUTTON
 if st.button("🔍 Find funding matches", type="primary", use_container_width=True):
 
-    # Store in session
     st.session_state['user_intake'] = {
         "organization": org_name,
         "name": name,
@@ -600,9 +610,16 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
         "Project Types": ", ".join(project_types) if project_types else "",
         "Project Title": project_title,
         "Description": description,
+        "Stage": stage,
+        "Themes": ", ".join(themes) if themes else "",
+        "Partners": partners,
     }
 
     submission_id = create_project_submission(fields)
+    
+    # Store submission ID for Deep Dive later
+    if submission_id:
+        st.session_state['submission_id'] = submission_id
 
     # Load programs
     df = load_funding_programs()
@@ -610,7 +627,7 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
         st.warning("No programs found")
         st.stop()
 
-    # Score all programs
+    # Score
     df["RawScore"] = df.apply(
         lambda row: raw_score_program(
             row, applicant_type, project_types, themes, budget_range, region, stage
@@ -618,17 +635,14 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
         axis=1,
     )
     df["Score"] = df["RawScore"].round().astype(int)
-
-    # Sort by score
     df = df.sort_values(by=["Score", "Program_Name"], ascending=[False, True], kind="mergesort")
 
-    # Update top program in Airtable
     if not df.empty and submission_id:
         update_project_submission(submission_id, {"Top Program ID": df.iloc[0]["id"]})
 
     st.session_state['matches'] = df
 
-    # Display results
+    # Display
     st.markdown(
         """
         <div class="section-header">
@@ -642,14 +656,12 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
         unsafe_allow_html=True,
     )
 
-    # LOOP THROUGH ALL PROGRAMS - BUTTONS ON EACH!
     for idx, row in df.iterrows():
         program_name = row.get("Program_Name", "Unknown")
         card_class = "program-card" if idx % 2 == 0 else "program-card program-card-alt"
         
         st.markdown(f"<div class='{card_class}'>", unsafe_allow_html=True)
         
-        # Program header with score
         st.markdown(
             f"""
             <div class="program-top">
@@ -666,7 +678,6 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
             unsafe_allow_html=True,
         )
 
-        # Program metrics
         st.markdown(
             f"""
             <div class="metric-grid">
@@ -687,52 +698,50 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
             unsafe_allow_html=True,
         )
 
-        # Program description
         if row.get("Program_Description"):
             st.markdown("<div class='info-box'>", unsafe_allow_html=True)
             st.write(row["Program_Description"])
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # ACTION BUTTONS
+        # BUTTONS
         st.markdown("---")
         button_col1, button_col2 = st.columns(2)
         
         with button_col1:
-            # Deep Dive button with better messaging
+            # Deep Dive - NOW ACTUALLY SAVES TO AIRTABLE!
             if st.button(f"🔍 Deep Dive", key=f"deep_dive_{idx}", use_container_width=True):
-                # Save to Airtable to trigger Make.com
-                if 'user_intake' in st.session_state and st.session_state['user_intake'].get('email'):
-                    user_email = st.session_state['user_intake']['email']
+                if submission_id:
+                    # Update Airtable to trigger Make.com
+                    success = trigger_deep_dive(submission_id, row.get("id"), program_name)
                     
-                    st.session_state['selected_program'] = row.to_dict()
-                    
-                    # Show success popup
-                    st.success("✅ Deep Dive Analysis Requested!")
-                    st.info(f"""
-                    **📧 Check your email within 24 hours**
-                    
-                    We're generating your strategic analysis for **{program_name}**.
-                    
-                    You'll receive a comprehensive report at: **{user_email}**
-                    
-                    The report includes:
-                    - GO/NO-GO verdict with match score
-                    - 3 immediate action items
-                    - Fit analysis (strengths & gaps)
-                    - Required documents checklist
-                    - Budget strategy recommendations
-                    - Red flags to avoid
-                    - 72-hour action plan
-                    
-                    **Estimated delivery:** 2-5 minutes
-                    """)
-                    
-                    st.balloons()
+                    if success:
+                        user_email = st.session_state['user_intake'].get('email', 'your email')
+                        st.success("✅ Deep Dive Analysis Requested!")
+                        st.info(f"""
+**📧 Expect email within 24 hours**
+
+Generating strategic analysis for **{program_name}**.
+
+Report will be sent to: **{user_email}**
+
+Includes:
+- GO/NO-GO verdict with score
+- 3 immediate action items  
+- Fit analysis & gaps
+- Required documents
+- Budget strategy
+- Red flags to avoid
+- 72-hour action plan
+
+**Estimated delivery:** 2-5 minutes
+                        """)
+                        st.balloons()
+                    else:
+                        st.error("Failed to request Deep Dive - please try again")
                 else:
-                    st.warning("Please fill out the form above first to receive Deep Dive analysis via email")
+                    st.warning("Please fill out the form first")
         
         with button_col2:
-            # Grant Readiness button
             template_exists = has_template(program_name)
             
             if template_exists:
@@ -756,4 +765,4 @@ if st.button("🔍 Find funding matches", type="primary", use_container_width=Tr
 
         st.markdown("</div>", unsafe_allow_html=True)
         
-    st.success(f"✅ Showing {len(df)} programs with Deep Dive + Grant Readiness options!")
+    st.success(f"✅ Showing {len(df)} programs!")
