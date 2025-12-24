@@ -9,8 +9,8 @@ from funding_templates.program_mapper import has_template
 from grant_readiness_page import show_grant_readiness_page
 from datetime import datetime, timedelta
 
-APP_VERSION = "v2.6.1"
-LAST_UPDATED = "Dec 24, 2025 - 3:10 PM PST - Fix dropdowns, hero image warmth"
+APP_VERSION = "v2.6.2"
+LAST_UPDATED = "Dec 24, 2025 - 5:00 PM PST - Enhanced dropdown autofill blocking"
 
 load_dotenv()
 AIRTABLE_PAT = os.getenv("AIRTABLE_PAT") or st.secrets.get("AIRTABLE_PAT")
@@ -142,11 +142,28 @@ textarea,input,select,.stTextInput input,.stTextArea textarea,.stSelectbox selec
 textarea:focus,input:focus,select:focus{border-color:var(--bright)!important;box-shadow:0 0 0 3px rgba(94,234,212,0.2)!important}
 input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 30px #475569 inset!important;-webkit-text-fill-color:#f8fafc!important}
 
-/* Hide grey placeholder bubble */
+/* Enhanced: Hide ALL autofill/placeholder elements in selectbox */
 .stSelectbox > div > div > div[data-baseweb="select"] > div:first-child,
 .stSelectbox [data-baseweb="popover"] > div:first-child,
 .stSelectbox div[class*="placeholder"],
-.stSelectbox svg[data-baseweb="icon"]:first-of-type {display:none!important}
+.stSelectbox div[data-baseweb="tag"],
+.stSelectbox svg[data-baseweb="icon"]:first-of-type,
+.stSelectbox [class*="Svg"],
+.stSelectbox [class*="ValueContainer"] > div:first-child:not([class*="Input"]),
+div[data-baseweb="select"] [class*="singleValue"]:empty,
+div[data-baseweb="select"] > div:first-child > div:first-child {
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    width:0!important;
+    height:0!important;
+}
+
+/* Ensure placeholder text shows correctly */
+.stSelectbox input[type="text"]::placeholder {
+    color: #94a3b8!important;
+    opacity: 1!important;
+}
 
 .stButton button{background:linear-gradient(120deg,#14b8a6,#5eead4)!important;color:#0f172a!important;font-weight:700!important;border-radius:12px!important;padding:14px 28px!important;border:none!important;box-shadow:0 4px 20px rgba(94,234,212,0.5);transition:all .3s}
 .stButton button:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 30px rgba(94,234,212,0.7)}
